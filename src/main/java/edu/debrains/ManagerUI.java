@@ -20,30 +20,28 @@ import com.vaadin.ui.VerticalLayout;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
-public class MyUI extends UI {
+public class ManagerUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         final VerticalLayout layout = new VerticalLayout();
-        
-        final TextField name = new TextField();
-        name.setCaption("Type your name here:");
 
-        Button button = new Button("Click Me");
-        button.addClickListener( e -> {
-            layout.addComponent(new Label("Thanks " + name.getValue() 
-                    + ", it works!"));
-        });
-        
-        layout.addComponents(name, button);
+        final ProjectContentModel model = new ProjectContentModel();
+
+        final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule(model);
+
+        layout.addComponent(projectOverviewModule);
+
         layout.setMargin(true);
         layout.setSpacing(true);
+
+        projectOverviewModule.init();
         
         setContent(layout);
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
-    public static class MyUIServlet extends VaadinServlet {
+    @VaadinServletConfiguration(ui = ManagerUI.class, productionMode = false)
+    public static class ProjectManagerServlet extends VaadinServlet {
     }
 }
