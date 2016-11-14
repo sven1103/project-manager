@@ -7,9 +7,9 @@ import com.vaadin.ui.VerticalLayout;
 /**
  * Created by sven on 11/13/16.
  */
-public class ProjectOverviewModule extends VerticalLayout{
+class ProjectOverviewModule extends VerticalLayout{
 
-    private final Presenter presenter = new Presenter();
+    private final ProjectOVPresenter presenter = new ProjectOVPresenter();
     private final ProjectContentModel contentModel;
 
     private final Button infoButton;
@@ -26,7 +26,7 @@ public class ProjectOverviewModule extends VerticalLayout{
         infoButton.addClickListener(presenter::getModelVersion);
     }
 
-    private class Presenter{
+    private class ProjectOVPresenter{
 
         void getModelVersion(Button.ClickEvent event){
             versionDisplay.setValue(contentModel.version);
