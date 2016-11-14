@@ -12,6 +12,8 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import java.sql.SQLException;
+
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
  * (or tab) or some part of a html page where a Vaadin application is embedded.
@@ -36,6 +38,12 @@ public class ManagerUI extends UI {
         layout.setSpacing(true);
 
         projectOverviewModule.init();
+        try{
+            model.connectToDB();
+        } catch (SQLException e){
+            System.err.println("Could not connect to database");
+            System.err.println(e);
+        }
         
         setContent(layout);
     }
