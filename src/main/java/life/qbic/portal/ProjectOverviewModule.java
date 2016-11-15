@@ -2,10 +2,7 @@ package life.qbic.portal;
 
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,10 +23,10 @@ class ProjectOverviewModule extends VerticalLayout{
     private final ProjectOVPresenter presenter;
     private final ProjectContentModel contentModel;
 
-    private final Button infoButton;
-    private final Label versionDisplay;
+    private final Button loadButton;
     private final Notification info;
     private final Notification error;
+    private final Grid overviewGrid;
 
     /**
      * Constructor
@@ -38,8 +35,8 @@ class ProjectOverviewModule extends VerticalLayout{
     ProjectOverviewModule(ProjectContentModel model){
         this.contentModel = model;
         this.presenter = new ProjectOVPresenter();
-        this.infoButton = new Button("Show Version");
-        this.versionDisplay = new Label();
+        this.loadButton = new Button("Load Table");
+        this.overviewGrid = new Grid();
         info = new Notification("", "", Notification.Type.TRAY_NOTIFICATION);
         error = new Notification("", "", Notification.Type.ERROR_MESSAGE);
         this.init();
@@ -50,11 +47,18 @@ class ProjectOverviewModule extends VerticalLayout{
      */
     private void init(){
         presenter.init();
-        this.addComponents(infoButton, versionDisplay);
+
+        this.addComponents(loadButton, overviewGrid);
+        this.setSpacing(true);
+        this.setSizeFull();
+
+        overviewGrid.setCaption("Projects overview");
+
+
         info.setDelayMsec(1000);
         info.setPosition(Position.TOP_CENTER);
 
-        infoButton.addClickListener(presenter::getModelVersion);
+        loadButton.addClickListener(presenter::loadTable);
     }
 
     /**
@@ -101,15 +105,21 @@ class ProjectOverviewModule extends VerticalLayout{
             } else{
                 sendInfo("Good Job", "Successfully connected to database");
             }
+
+            if (!contentModel.loadData()){
+                sendError("Damn", "Could not load the data from the database :(");
+                loadButton.setEnabled(false);
+            }
         }
 
         /**
          * Static method reference to buttons
          * @param event A button click event
          */
-        void getModelVersion(Button.ClickEvent event){
-            versionDisplay.setValue(contentModel.version);
-            sendInfo("Info!", "You just clicked the button");
+        void loadTable(Button.ClickEvent event){
+
+            overviewGrid.setContainerDataSource(contentModel.getTableContent());
+
         }
 
     }

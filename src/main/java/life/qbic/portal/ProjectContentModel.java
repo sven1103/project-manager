@@ -48,7 +48,9 @@ class ProjectContentModel {
     /**
      * Load the complete data from the projectoverview table.
      */
-    void loadData(){
+    public boolean loadData(){
+        boolean loadingSuccessful = true;
+
         query = new FreeformQuery(
                 queryALL, pool, primaryKey);
         try{
@@ -57,16 +59,14 @@ class ProjectContentModel {
         } catch (SQLException e){
             log.error("Could not perform query");
             tableContent = null;
+            loadingSuccessful = false;
         } catch (Exception e){
-            System.err.println("Another exception occured");
+            log.error("Another exception occured", e);
             tableContent = null;
+            loadingSuccessful = false;
         }
 
-        if (tableContent != null){
-            System.out.println(tableContent.getContainerPropertyIds());
-        } else{
-            log.warn("Table content is empty");
-        }
+        return loadingSuccessful;
     }
 
     public SQLContainer getTableContent(){
