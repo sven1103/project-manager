@@ -186,4 +186,15 @@
 		</profile>
 	</profiles>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<uniqueVersion>true</uniqueVersion>
+			<id>nexusSnap</id>
+			<name>Nexus Snapshots</name>
+			<url>https://peltzer.com.de/nexus/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+
+
 </project>
