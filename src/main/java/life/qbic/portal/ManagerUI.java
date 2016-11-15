@@ -29,7 +29,7 @@ public class ManagerUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        log.info("Started application.");
+        log.info("Started project-manager.");
 
         final VerticalLayout layout = new VerticalLayout();
 
