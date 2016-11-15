@@ -11,6 +11,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.sql.SQLException;
 
@@ -24,8 +26,16 @@ import java.sql.SQLException;
 @Theme("mytheme")
 public class ManagerUI extends UI {
 
+    /**
+     * Get static logger instance
+     */
+    private final static Log log =
+            LogFactory.getLog(ManagerUI.class.getName());
+
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        log.info("Started application.");
+
         final VerticalLayout layout = new VerticalLayout();
 
         final ProjectContentModel model = new ProjectContentModel();
@@ -37,14 +47,8 @@ public class ManagerUI extends UI {
         layout.setMargin(true);
         layout.setSpacing(true);
 
-        projectOverviewModule.init();
-        try{
-            model.connectToDB();
-        } catch (SQLException e){
-            System.err.println("Could not connect to database");
-            System.err.println(e);
-        }
-        
+
+        model.loadData();
         setContent(layout);
     }
 

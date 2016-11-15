@@ -4,6 +4,8 @@ import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.sql.SQLException;
 
@@ -13,6 +15,12 @@ import java.sql.SQLException;
  * MySQL database which contains all the information of QBiC projects.
  */
 class ProjectContentModel {
+
+    /**
+     * Get static logger instance
+     */
+    private final static Log log =
+            LogFactory.getLog(ProjectContentModel.class.getName());
 
     final String version = "Version 0.1b";
     private JDBCConnectionPool pool;
@@ -24,25 +32,45 @@ class ProjectContentModel {
 
     private SQLContainer tableContent;
 
-    void connectToDB() throws SQLException{
-        pool = new SimpleJDBCConnectionPool(
-                "com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/qbicprojects", "root", "yL8GOiWAQ1jvsj6cvc8R", 2, 5
-        );
-        loadData();
+    public boolean connectToDB(){
+        try{
+            pool = new SimpleJDBCConnectionPool(
+                    "com.mysql.jdbc.Driver",
+                    "jdbc:mysql://portal-testing.am10.uni-tuebingen.de:3306/project_investigator_db", "mariadbuser", "dZAmDa9-Ysq_Zv1AGygQ", 2, 5
+            );
+        } catch (Exception e){
+            log.fatal("SQL Connection to database failed!", e);
+            return false;
+        }
+        return true;
     }
 
+    /**
+     * Load the complete data from the projectoverview table.
+     */
     void loadData(){
         query = new FreeformQuery(
                 queryALL, pool, primaryKey);
         try{
             tableContent = new SQLContainer(query);
-            System.out.println("SQL container successfully loaded.");
+            log.info("SQL container successfully loaded.");
         } catch (SQLException e){
-            System.err.println("Could not perform query");
+            log.error("Could not perform query");
+            tableContent = null;
+        } catch (Exception e){
+            System.err.println("Another exception occured");
             tableContent = null;
         }
-        System.out.println(tableContent.getContainerPropertyIds());
+
+        if (tableContent != null){
+            System.out.println(tableContent.getContainerPropertyIds());
+        } else{
+            log.warn("Table content is empty");
+        }
+    }
+
+    public SQLContainer getTableContent(){
+        return this.tableContent;
     }
 
 
