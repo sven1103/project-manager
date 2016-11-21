@@ -10,6 +10,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import life.qbic.vaadin.QBiCNotify;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
