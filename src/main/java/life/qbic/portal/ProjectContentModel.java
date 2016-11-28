@@ -3,7 +3,7 @@ package life.qbic.portal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
-import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
+import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,10 +25,9 @@ class ProjectContentModel {
     final String version = "Version 0.1b";
     private JDBCConnectionPool pool;
 
-    final String queryALL = "SELECT * FROM projectsoverview";
-    final String primaryKey = "projectID";
+    final private String tableName = "projectsoverview";
 
-    private FreeformQuery query;
+    private TableQuery query;
 
     private SQLContainer tableContent;
 
@@ -51,13 +50,15 @@ class ProjectContentModel {
     public boolean loadData(){
         boolean loadingSuccessful = true;
 
-        query = new FreeformQuery(
-                queryALL, pool, primaryKey);
+        query = new TableQuery(tableName, pool);
+        query.setVersionColumn("projectID");
+
         try{
             tableContent = new SQLContainer(query);
+            tableContent.setAutoCommit(true);
             log.info("SQL container successfully loaded.");
         } catch (SQLException e){
-            log.error("Could not perform query");
+            log.error("Could not perform query. Reason: " + e.getMessage());
             tableContent = null;
             loadingSuccessful = false;
         } catch (Exception e){
@@ -72,13 +73,5 @@ class ProjectContentModel {
     public SQLContainer getTableContent(){
         return this.tableContent;
     }
-
-
-
-
-
-
-
-
 
 }
