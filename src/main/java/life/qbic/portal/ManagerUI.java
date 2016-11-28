@@ -42,7 +42,6 @@ public class ManagerUI extends UI {
 
         layout.setMargin(true);
         layout.setSpacing(true);
-
         setContent(layout);
     }
 
