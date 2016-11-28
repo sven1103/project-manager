@@ -1,10 +1,18 @@
 package life.qbic.portal;
 
+import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
 import com.vaadin.server.Page;
+import com.vaadin.server.UserError;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Grid.Column;
+import com.vaadin.ui.renderers.DateRenderer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * Created by sven on 11/13/16.
@@ -26,7 +34,8 @@ class ProjectOverviewModule extends VerticalLayout{
     private final Button loadButton;
     private final Notification info;
     private final Notification error;
-    private final Grid overviewGrid;
+    private final MyGrid overviewGrid;
+    private List<Column> columnList;
 
     /**
      * Constructor
@@ -34,27 +43,26 @@ class ProjectOverviewModule extends VerticalLayout{
      */
     ProjectOverviewModule(ProjectContentModel model){
         this.contentModel = model;
-        this.presenter = new ProjectOVPresenter();
         this.loadButton = new Button("Load Table");
-        this.overviewGrid = new Grid();
-        info = new Notification("", "", Notification.Type.TRAY_NOTIFICATION);
-        error = new Notification("", "", Notification.Type.ERROR_MESSAGE);
-        this.init();
+        this.overviewGrid = new MyGrid();
+        this.info = new Notification("", "", Notification.Type.TRAY_NOTIFICATION);
+        this.error = new Notification("", "", Notification.Type.ERROR_MESSAGE);
+        this.presenter = new ProjectOVPresenter();
+        init();
     }
 
     /**
      * Make some init settings
      */
     private void init(){
-        presenter.init();
 
         this.addComponents(loadButton, overviewGrid);
         this.setSpacing(true);
-        this.setSizeFull();
 
         overviewGrid.setCaption("Projects overview");
-
-
+        overviewGrid.setSizeFull();
+        overviewGrid.setEditorEnabled(true);
+        //fieldGroup.addCommitHandler(presenter.commitChanges());
         info.setDelayMsec(1000);
         info.setPosition(Position.TOP_CENTER);
 
@@ -92,12 +100,34 @@ class ProjectOverviewModule extends VerticalLayout{
      */
     class ProjectOVPresenter{
 
+        ProjectOVPresenter(){
+            init();
+        }
+
         /**
          * Call and validate database connection of the business logic.
          */
         void init(){
+
+            overviewGrid.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
+                private static final long serialVersionUID = -8378742499490422335L;
+
+                @Override
+                public void preCommit(FieldGroup.CommitEvent commitEvent)
+                        throws FieldGroup.CommitException {
+                    //
+                }
+
+                @Override
+                public void postCommit(FieldGroup.CommitEvent commitEvent)
+                        throws FieldGroup.CommitException {
+                    Notification.show("Saved successfully");
+                    overviewGrid.setComponentError(new UserError("This is user error could be empty"));
+                }
+            });
+
             if (contentModel == null){
-                log.error("The model was not instanciated yet!");
+                log.error("The model was not instantiated yet!");
                 return;
             }
             if(!contentModel.connectToDB()){
@@ -107,7 +137,7 @@ class ProjectOverviewModule extends VerticalLayout{
             }
 
             if (!contentModel.loadData()){
-                sendError("Damn", "Could not load the data from the database :(");
+                sendError("Sorry", "Could not load the data from the database :(");
                 loadButton.setEnabled(false);
             }
         }
@@ -117,11 +147,39 @@ class ProjectOverviewModule extends VerticalLayout{
          * @param event A button click event
          */
         void loadTable(Button.ClickEvent event){
-
             overviewGrid.setContainerDataSource(contentModel.getTableContent());
-
+            renderTable();
         }
 
+        private void renderTable(){
+            columnList = overviewGrid.getColumns();
+            columnList.forEach((Column column) -> {
+                String colName = column.getPropertyId().toString();
+                if (colName.contains("Date")) {
+                    overviewGrid.removeColumn(colName);
+                }
+            });
+            ColumnFieldTypes.clearFromParents();    // Clear from parent nodes (when reloading page)
+            setFieldType("projectStatus", ColumnFieldTypes.PROJECTSTATUS);
+            setFieldType("projectRegistered", ColumnFieldTypes.PROJECTREGISTERED);
+            setFieldType("barcodeSent", ColumnFieldTypes.BARCODESENT);
+            setFieldType("dataProcessed", ColumnFieldTypes.DATAPROCESSED);
+            setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
+            setFieldType("reportSent", ColumnFieldTypes.REPORTSENT);
+        }
+
+
+        private void setFieldType(String columnID, Field fieldType){
+            try{
+                overviewGrid.getColumn(columnID).setEditorField(fieldType);
+            } catch (Exception exp){
+                log.error(String.format("Could not set editor field %s. Reason: %s", columnID, exp.getMessage()));
+            }
+        }
+
+        private void renderToDate(Column col){
+            col.setRenderer(new DateRenderer(new SimpleDateFormat("EEE, MMM d, YYYY")));
+        }
     }
 
 }
