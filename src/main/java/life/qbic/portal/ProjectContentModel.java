@@ -1,13 +1,16 @@
 package life.qbic.portal;
 
+import com.vaadin.data.util.filter.Like;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * Created by sven on 11/13/16.
@@ -29,9 +32,21 @@ class ProjectContentModel {
 
     private TableQuery query;
 
+    private String primaryKey = "projectID";
+
     private SQLContainer tableContent;
 
-    public boolean connectToDB(){
+    private final String queryStatusOpen = String.format("SELECT * FROM %s WHERE projectStatus=\'open\'", tableName);
+
+    private final String queryClosedStatus = String.format("SELECT * FROM %s WHERE projectStatus=\'closed\'", tableName);
+
+    private final String queryProgressStatus = String.format("SELECT * FROM %s WHERE projectStatus=\'in progress\'", tableName);
+
+    /**
+     * Init database connection
+     * @return True for success, false for failure
+     */
+    boolean connectToDB(){
         try{
             pool = new SimpleJDBCConnectionPool(
                     "com.mysql.jdbc.Driver",
@@ -47,11 +62,11 @@ class ProjectContentModel {
     /**
      * Load the complete data from the projectoverview table.
      */
-    public boolean loadData(){
+    boolean loadData(){
         boolean loadingSuccessful = true;
 
         query = new TableQuery(tableName, pool);
-        query.setVersionColumn("projectID");
+        query.setVersionColumn(primaryKey);
 
         try{
             tableContent = new SQLContainer(query);
@@ -70,8 +85,50 @@ class ProjectContentModel {
         return loadingSuccessful;
     }
 
-    public SQLContainer getTableContent(){
+    /**
+     * Getter for the table content
+     * @return The table content
+     */
+    SQLContainer getTableContent(){
         return this.tableContent;
     }
+
+    /**
+     * Performs a free form query to the database
+     * @param query A SQL query string
+     * @return A FreeFormQuery
+     * @throws SQLException If the query goes wrong
+     */
+    private FreeformQuery makeFreeFormQuery(String query) throws SQLException{
+        FreeformQuery tmpQuery = new FreeformQuery(query, pool, primaryKey);
+        return tmpQuery;
+    }
+
+    /**
+     * Request the counts for the key figures of
+     * the projects status 'open', 'in progress', 'closed'
+     * @return A hashmap with key figures and names
+     */
+    public HashMap<String, Double> getKeyFigures(){
+        double openStatus;
+        double closedStatus;
+        double progressStatus;
+        HashMap<String, Double> keyFigures = new HashMap<>();
+        try{
+            openStatus = (double) makeFreeFormQuery(this.queryStatusOpen).getCount();
+            closedStatus = (double) makeFreeFormQuery(this.queryClosedStatus).getCount();
+            progressStatus = (double) makeFreeFormQuery(this.queryProgressStatus).getCount();
+        } catch (SQLException exp){
+            log.error(String.format("Could not perform status query. Reason: %s", exp.getMessage()));
+            return keyFigures;
+        }
+        keyFigures.put("closed", closedStatus);
+        keyFigures.put("open", openStatus);
+        keyFigures.put("in progress", progressStatus);
+        return keyFigures;
+    }
+
+
+
 
 }
