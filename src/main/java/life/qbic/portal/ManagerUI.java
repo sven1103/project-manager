@@ -10,7 +10,6 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import life.qbic.vaadin.QBiCNotify;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -36,8 +35,14 @@ public class ManagerUI extends UI {
 
         final ProjectContentModel model = new ProjectContentModel();
 
+        final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
+
         final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule(model);
 
+        final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
+                projectOverviewModule);
+
+        layout.addComponent(pieChartStatusModule);
         layout.addComponent(projectOverviewModule);
 
         layout.setMargin(true);
