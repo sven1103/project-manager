@@ -12967,3 +12967,26 @@ div.v-layout.v-horizontal.v-widget {
 	width: 19px;
 	overflow: hidden;
 }
+
+.mytheme .v-grid-cell-no {
+	font-size: 14px;
+	color: #464646;
+	font-weight: bold;
+}
+
+.mytheme .v-grid-cell-progress {
+	font-size: 14px;
+	color: #0F4FA8;
+	font-weight: bold;
+}
+
+.mytheme .v-grid-cell-done {
+	font-size: 14px;
+	color: #00C618;
+	font-weight: bold;
+}
+
+.mytheme .v-grid-cell-normal {
+	font-size: 14px;
+	color: #464646;
+}
