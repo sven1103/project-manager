@@ -1,6 +1,8 @@
 package life.qbic.portal;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
+import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.server.Extension;
 import com.vaadin.server.communication.data.RpcDataProviderExtension;
 import com.vaadin.ui.Grid;
@@ -12,6 +14,8 @@ import java.util.Collection;
  */
 public class MyGrid extends Grid {
 
+    public ObjectProperty<Boolean> isChanged = new ObjectProperty<>(true, Boolean.class);
+
     public MyGrid(){
         setEditorEnabled(true);
         setEditorBuffered(true);
@@ -21,6 +25,7 @@ public class MyGrid extends Grid {
     public void saveEditor() throws FieldGroup.CommitException{
         super.saveEditor();
         refreshVisibleRows();
+        isChanged.setValue(false ? isChanged.getValue() : true);
     }
 
     /**
