@@ -35,4 +35,27 @@
   @include valo;
 
   // Insert your own theme rules here
+     .v-grid-cell-no{
+       	font-size: 14px;
+       	color: #464646;
+       	font-weight: bold;
+       }
+
+     .v-grid-cell-progress{
+        font-size: 14px;
+        color: #0F4FA8;
+        font-weight: bold;
+     }
+
+     .v-grid-cell-done{
+       font-size: 14px;
+       color: #00C618;
+       font-weight: bold;
+      }
+
+      .v-grid-cell-normal{
+        font-size: 14px;
+        color: #464646;
+      }
+
 }
