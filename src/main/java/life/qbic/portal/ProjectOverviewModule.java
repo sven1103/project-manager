@@ -1,9 +1,8 @@
 package life.qbic.portal;
 
-import com.vaadin.data.fieldgroup.FieldGroup;
-import com.vaadin.data.fieldgroup.FieldGroup.CommitHandler;
+import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Like;
 import com.vaadin.server.Page;
-import com.vaadin.server.UserError;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
@@ -12,7 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by sven on 11/13/16.
@@ -31,11 +30,18 @@ class ProjectOverviewModule extends VerticalLayout{
     private final ProjectOVPresenter presenter;
     private final ProjectContentModel contentModel;
 
-    private final Button loadButton;
     private final Notification info;
     private final Notification error;
     private final MyGrid overviewGrid;
     private List<Column> columnList;
+    private HashSet columnHide = new HashSet<String>(){{
+        add("projectID");
+        add("investigatorID");
+        add("instrumentID");
+        add("offerID");
+        add("invoice");
+    }};
+
 
     /**
      * Constructor
@@ -43,7 +49,6 @@ class ProjectOverviewModule extends VerticalLayout{
      */
     ProjectOverviewModule(ProjectContentModel model){
         this.contentModel = model;
-        this.loadButton = new Button("Load Table");
         this.overviewGrid = new MyGrid();
         this.info = new Notification("", "", Notification.Type.TRAY_NOTIFICATION);
         this.error = new Notification("", "", Notification.Type.ERROR_MESSAGE);
@@ -56,19 +61,21 @@ class ProjectOverviewModule extends VerticalLayout{
      */
     private void init(){
 
-        this.addComponents(loadButton, overviewGrid);
+        this.addComponents(overviewGrid);
         this.setSpacing(true);
 
         overviewGrid.setCaption("Projects overview");
-        overviewGrid.setSizeFull();
+        overviewGrid.setHeight(50, Unit.PERCENTAGE);
+        overviewGrid.setWidth(50, Unit.PERCENTAGE);
         overviewGrid.setEditorEnabled(true);
         //fieldGroup.addCommitHandler(presenter.commitChanges());
         info.setDelayMsec(1000);
         info.setPosition(Position.TOP_CENTER);
-
-        loadButton.addClickListener(presenter::loadTable);
     }
 
+    public ProjectOVPresenter getPresenter(){
+        return presenter;
+    }
     /**
      * Sends an info notification message to the user on the screen.
      * @param caption The caption
@@ -92,6 +99,14 @@ class ProjectOverviewModule extends VerticalLayout{
     }
 
     /**
+     * Getter for the grid
+     * @return
+     */
+    MyGrid getOverviewGrid(){
+        return this.overviewGrid;
+    }
+
+    /**
      * This presenter class will connect the UI with the underlying
      * logic. As this module will display the projectmanager database
      * content, the presenter will request data from the model, which handles
@@ -99,6 +114,8 @@ class ProjectOverviewModule extends VerticalLayout{
      * Issues and Errors will be directed to the user via a notification message.
      */
     class ProjectOVPresenter{
+
+        private final int timeout = 5000;
 
         ProjectOVPresenter(){
             init();
@@ -108,57 +125,36 @@ class ProjectOverviewModule extends VerticalLayout{
          * Call and validate database connection of the business logic.
          */
         void init(){
-
-            overviewGrid.getEditorFieldGroup().addCommitHandler(new CommitHandler() {
-                private static final long serialVersionUID = -8378742499490422335L;
-
-                @Override
-                public void preCommit(FieldGroup.CommitEvent commitEvent)
-                        throws FieldGroup.CommitException {
-                    //
-                }
-
-                @Override
-                public void postCommit(FieldGroup.CommitEvent commitEvent)
-                        throws FieldGroup.CommitException {
-                    Notification.show("Saved successfully");
-                    overviewGrid.setComponentError(new UserError("This is user error could be empty"));
-                }
-            });
-
             if (contentModel == null){
                 log.error("The model was not instantiated yet!");
                 return;
             }
             if(!contentModel.connectToDB()){
                 sendError("Database Error", "Could not connect to database :(");
+                return;
             } else{
                 sendInfo("Good Job", "Successfully connected to database");
             }
-
             if (!contentModel.loadData()){
                 sendError("Sorry", "Could not load the data from the database :(");
-                loadButton.setEnabled(false);
+                return;
             }
-        }
 
-        /**
-         * Static method reference to buttons
-         * @param event A button click event
-         */
-        void loadTable(Button.ClickEvent event){
             overviewGrid.setContainerDataSource(contentModel.getTableContent());
             renderTable();
+
         }
+
 
         private void renderTable(){
             columnList = overviewGrid.getColumns();
             columnList.forEach((Column column) -> {
                 String colName = column.getPropertyId().toString();
-                if (colName.contains("Date")) {
+                if (colName.contains("Date") || columnHide.contains(colName)) {
                     overviewGrid.removeColumn(colName);
                 }
             });
+
             ColumnFieldTypes.clearFromParents();    // Clear from parent nodes (when reloading page)
             setFieldType("projectStatus", ColumnFieldTypes.PROJECTSTATUS);
             setFieldType("projectRegistered", ColumnFieldTypes.PROJECTREGISTERED);
@@ -166,6 +162,19 @@ class ProjectOverviewModule extends VerticalLayout{
             setFieldType("dataProcessed", ColumnFieldTypes.DATAPROCESSED);
             setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
             setFieldType("reportSent", ColumnFieldTypes.REPORTSENT);
+
+            overviewGrid.setCellStyleGenerator(cellReference -> {
+                if ("no".equals(cellReference.getValue())){
+                    return "v-grid-cell-no";
+                }
+                if ("in progress".equals(cellReference.getValue())){
+                    return "v-grid-cell-progress";
+                }
+                if ("done".equals(cellReference.getValue())){
+                    return "v-grid-cell-done";
+                }
+                return "v-grid-cell-normal";
+            });
         }
 
 
@@ -180,6 +189,22 @@ class ProjectOverviewModule extends VerticalLayout{
         private void renderToDate(Column col){
             col.setRenderer(new DateRenderer(new SimpleDateFormat("EEE, MMM d, YYYY")));
         }
+
+        public HashMap<String, Double> getStatusKeyFigures(){
+            return contentModel.getKeyFigures();
+        }
+
+        public void setFilter(String column, String filter){
+            Container.Filter tmpFilter = new Like (column, filter);
+            if(!contentModel.getTableContent().getContainerFilters().contains(tmpFilter)){
+                contentModel.getTableContent().removeAllContainerFilters();
+                contentModel.getTableContent().addContainerFilter(new Like(column, filter));
+            } else{
+                contentModel.getTableContent().removeContainerFilter(tmpFilter);
+            }
+
+        }
+
     }
 
 }
