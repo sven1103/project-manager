@@ -1,6 +1,5 @@
 package life.qbic.portal;
 
-import com.vaadin.data.util.filter.Like;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
