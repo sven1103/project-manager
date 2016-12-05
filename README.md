@@ -1,3 +1,5 @@
+[![Build Status](https://qbic-intranet.am10.uni-tuebingen.de/jenkins/job/project-manager/badge/icon)](https://qbic-intranet.am10.uni-tuebingen.de/jenkins/job/project-manager/)
+
 project-manager
 ==============
 
