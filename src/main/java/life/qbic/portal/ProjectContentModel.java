@@ -35,22 +35,39 @@ class ProjectContentModel {
 
     private SQLContainer tableContent;
 
+    private String driverName = "com.mysql.jdbc.Driver";
+
+    private String connectionURI = "jdbc:mysql://portal-testing.am10.uni-tuebingen.de:3306/project_investigator_db";
+
+    private String password;
+
+    private String user;
+
     private final String queryStatusOpen = String.format("SELECT * FROM %s WHERE projectStatus=\'open\'", tableName);
 
     private final String queryClosedStatus = String.format("SELECT * FROM %s WHERE projectStatus=\'closed\'", tableName);
 
     private final String queryProgressStatus = String.format("SELECT * FROM %s WHERE projectStatus=\'in progress\'", tableName);
 
+
+    ProjectContentModel() {
+    }
+
+    final void setPassword(String password){
+        this.password = password;
+    }
+
+    final void setUser(String user){
+        this.user = user;
+    }
+
     /**
      * Init database connection
      * @return True for success, false for failure
      */
-    boolean connectToDB(){
+    final boolean connectToDB(){
         try{
-            pool = new SimpleJDBCConnectionPool(
-                    "com.mysql.jdbc.Driver",
-                    "jdbc:mysql://portal-testing.am10.uni-tuebingen.de:3306/project_investigator_db", "mariadbuser", "dZAmDa9-Ysq_Zv1AGygQ", 2, 5
-            );
+            pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
         } catch (Exception e){
             log.fatal("SQL Connection to database failed!", e);
             return false;
@@ -61,7 +78,7 @@ class ProjectContentModel {
     /**
      * Load the complete data from the projectoverview table.
      */
-    boolean loadData(){
+    final boolean loadData(){
         boolean loadingSuccessful = true;
 
         query = new TableQuery(tableName, pool);
@@ -88,7 +105,7 @@ class ProjectContentModel {
      * Getter for the table content
      * @return The table content
      */
-    SQLContainer getTableContent(){
+    final SQLContainer getTableContent(){
         return this.tableContent;
     }
 
@@ -108,7 +125,7 @@ class ProjectContentModel {
      * the projects status 'open', 'in progress', 'closed'
      * @return A hashmap with key figures and names
      */
-    public HashMap<String, Double> getKeyFigures(){
+    final HashMap<String, Double> getKeyFigures(){
         double openStatus;
         double closedStatus;
         double progressStatus;
