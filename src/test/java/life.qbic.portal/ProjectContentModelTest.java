@@ -8,6 +8,7 @@ import org.junit.rules.ExpectedException;
 
 
 import java.lang.reflect.Field;
+import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
 
@@ -49,13 +50,12 @@ public class ProjectContentModelTest {
         assertTrue(projectContentModel.connectToDB());
     }
 
-    @Test
-    public void loadData() throws Exception {
+    @Test(expected = RuntimeException.class)
+    public void loadData() throws SQLException {
         projectContentModel.setUser("dummy");
         projectContentModel.setPassword("password");
         projectContentModel.connectToDB();
-        assertFalse(projectContentModel.loadData());
-
+        projectContentModel.loadData();
     }
 
     @Test
