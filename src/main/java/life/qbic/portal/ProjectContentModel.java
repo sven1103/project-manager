@@ -78,26 +78,14 @@ class ProjectContentModel {
     /**
      * Load the complete data from the projectoverview table.
      */
-    final boolean loadData(){
-        boolean loadingSuccessful = true;
+    final void loadData() throws SQLException{
 
-        try{
-            query = new TableQuery(tableName, pool);
-            query.setVersionColumn(primaryKey);
-            tableContent = new SQLContainer(query);
-            tableContent.setAutoCommit(true);
-            log.info("SQL container successfully loaded.");
-        } catch (SQLException e){
-            log.error("Could not perform query. Reason: " + e.getMessage());
-            tableContent = null;
-            loadingSuccessful = false;
-        } catch (Exception e){
-            log.error("Another exception occured", e);
-            tableContent = null;
-            loadingSuccessful = false;
-        }
+        query = new TableQuery(tableName, pool);
+        query.setVersionColumn(primaryKey);
+        tableContent = new SQLContainer(query);
+        tableContent.setAutoCommit(true);
+        log.info("SQL container successfully loaded.");
 
-        return loadingSuccessful;
     }
 
     /**

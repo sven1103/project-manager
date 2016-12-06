@@ -53,13 +53,13 @@ class ProjectOverviewModule extends VerticalLayout{
         this.info = new Notification("", "", Notification.Type.TRAY_NOTIFICATION);
         this.error = new Notification("", "", Notification.Type.ERROR_MESSAGE);
         this.presenter = new ProjectOVPresenter();
-        init();
     }
 
     /**
      * Make some init settings
      */
-    private void init(){
+    public void init() throws Exception{
+        this.presenter.init();
 
         this.addComponents(overviewGrid);
         this.setSpacing(true);
@@ -118,13 +118,12 @@ class ProjectOverviewModule extends VerticalLayout{
         private final int timeout = 5000;
 
         ProjectOVPresenter(){
-            init();
         }
 
         /**
          * Call and validate database connection of the business logic.
          */
-        void init(){
+        public void init() throws Exception{
             if (contentModel == null){
                 log.error("The model was not instantiated yet!");
                 return;
@@ -135,10 +134,8 @@ class ProjectOverviewModule extends VerticalLayout{
             } else{
                 sendInfo("Good Job", "Successfully connected to database");
             }
-            if (!contentModel.loadData()){
-                sendError("Sorry", "Could not load the data from the database :(");
-                return;
-            }
+
+            contentModel.loadData();
 
             overviewGrid.setContainerDataSource(contentModel.getTableContent());
             renderTable();

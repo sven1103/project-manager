@@ -2,6 +2,8 @@ package life.qbic.portal;
 
 import com.vaadin.data.Property;
 import com.vaadin.ui.Upload;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is a master presenter class and
@@ -14,6 +16,8 @@ public class MasterPresenter {
 
     private final ProjectOverviewModule projectOverviewModule;
 
+    private final static Log log =
+            LogFactory.getLog(ManagerUI.class.getName());
 
     MasterPresenter(PieChartStatusModule pieChartStatusModule,
                     ProjectOverviewModule projectOverviewModule){
@@ -24,6 +28,14 @@ public class MasterPresenter {
     }
 
     private void init(){
+        try{
+            projectOverviewModule.init();
+            log.info("Init projectoverview module successfully.");
+        } catch (Exception exp){
+            log.fatal("Init of projectoverview module failed. Reeason: " + exp.getMessage());
+            projectOverviewModule.sendError("Project Overview Module failed.", exp.getMessage());
+        }
+
         projectOverviewModule.getPresenter().getStatusKeyFigures().forEach(pieChartStatusModule::update);
         pieChartStatusModule.addPointClickListener(event -> {
                 projectOverviewModule.getPresenter().setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
