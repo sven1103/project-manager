@@ -1,4 +1,5 @@
 [![Build Status](https://qbic-intranet.am10.uni-tuebingen.de/jenkins/job/project-manager/badge/icon)](https://qbic-intranet.am10.uni-tuebingen.de/jenkins/job/project-manager/)
+[![codecov](https://codecov.io/gh/qbicsoftware/project-manager/branch/master/graph/badge.svg)](https://codecov.io/gh/qbicsoftware/project-manager)
 
 project-manager
 ==============
