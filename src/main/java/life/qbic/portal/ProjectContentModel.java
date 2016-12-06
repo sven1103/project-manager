@@ -81,10 +81,9 @@ class ProjectContentModel {
     final boolean loadData(){
         boolean loadingSuccessful = true;
 
-        query = new TableQuery(tableName, pool);
-        query.setVersionColumn(primaryKey);
-
         try{
+            query = new TableQuery(tableName, pool);
+            query.setVersionColumn(primaryKey);
             tableContent = new SQLContainer(query);
             tableContent.setAutoCommit(true);
             log.info("SQL container successfully loaded.");
