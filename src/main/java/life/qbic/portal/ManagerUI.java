@@ -8,8 +8,11 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.Map;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -29,11 +32,21 @@ public class ManagerUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+
         log.info("Started project-manager.");
+
+        Map<String, String> credentials = getCredentialsFromEnvVariables();
+
+        if (credentials == null){
+            System.err.println("Database login credentials missing from environment");
+            System.exit(1);
+        }
 
         final VerticalLayout layout = new VerticalLayout();
 
         final ProjectContentModel model = new ProjectContentModel();
+        model.setPassword(credentials.get("sqlpassword"));
+        model.setUser(credentials.get("sqluser"));
 
         final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
 
@@ -48,6 +61,19 @@ public class ManagerUI extends UI {
         layout.setMargin(true);
         layout.setSpacing(true);
         setContent(layout);
+    }
+
+
+    private Map<String, String> getCredentialsFromEnvVariables(){
+        final Map<String, String> credentials = new HashedMap();
+        credentials.put("sqluser", System.getProperty("sqluser"));
+        credentials.put("sqlpassword", System.getProperty("sqlpassword"));
+
+        if (credentials.get("sqluser") != null && credentials.get("sqlpassword") != null){
+            return credentials;
+        } else {
+            return null;
+        }
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
