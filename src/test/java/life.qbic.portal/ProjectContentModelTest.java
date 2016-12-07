@@ -1,11 +1,8 @@
 package life.qbic.portal;
 
-import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
-import org.junit.Rule;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 
 import java.lang.reflect.Field;
 import java.sql.SQLException;
@@ -23,10 +20,16 @@ public class ProjectContentModelTest {
 
     FreeformQuery freeformQueryMock = mock(FreeformQuery.class);
 
+    @Before
+    public void setUp() {
+        // Setup up credentials for test instance
+        projectContentModel.setPassword("dZAmDa9-Ysq_Zv1AGygQ");
+        projectContentModel.setUser("mariadbuser");
+    }
+
     @Test
     public void setPassword() throws NoSuchFieldException, IllegalAccessException {
         projectContentModel.setPassword("helloWorld");
-
         final Field field = projectContentModel.getClass().getDeclaredField("password");
         field.setAccessible(true);
         assertEquals("Passwords don't match", field.get(projectContentModel), "helloWorld");
@@ -44,18 +47,22 @@ public class ProjectContentModelTest {
 
     @Test
     public void connectToDB() {
-        assertFalse(projectContentModel.connectToDB());
-        projectContentModel.setUser("dummy");
-        projectContentModel.setPassword("password");
         assertTrue(projectContentModel.connectToDB());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void loadData() throws SQLException {
-        projectContentModel.setUser("dummy");
-        projectContentModel.setPassword("password");
+    @Test
+    public void loadData() throws SQLException, IllegalAccessException {
         projectContentModel.connectToDB();
         projectContentModel.loadData();
+
+        try {
+            Field field = projectContentModel.getClass().getDeclaredField("tableContent");
+            field.setAccessible(true);
+            assertNotNull(field.get(projectContentModel));
+            field.setAccessible(false);
+        } catch (NoSuchFieldException exp){
+            fail();
+        }
     }
 
     @Test
