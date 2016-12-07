@@ -84,7 +84,6 @@ class ProjectContentModel {
         query.setVersionColumn(primaryKey);
         tableContent = new SQLContainer(query);
         tableContent.setAutoCommit(true);
-        log.info("SQL container successfully loaded.");
 
     }
 
@@ -129,6 +128,14 @@ class ProjectContentModel {
         keyFigures.put("open", openStatus);
         keyFigures.put("in progress", progressStatus);
         return keyFigures;
+    }
+
+    final void setDriverName(String driverName){
+        this.driverName = driverName;
+    }
+
+    final void setConnectionURI(String connectionURI){
+        this.connectionURI = connectionURI;
     }
 
 
