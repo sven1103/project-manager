@@ -1,7 +1,15 @@
 package life.qbic.portal;
 
-/**
- * Created by sven1103 on 8/12/16.
- */
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
+@RunWith(Suite.class)
+
+@Suite.SuiteClasses({
+        ProjectContentModelTest.class,
+        ProjectOverviewModuleTest.class
+})
+
+
 public class TestSuite {
 }

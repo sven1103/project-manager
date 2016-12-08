@@ -8,6 +8,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import life.qbic.portal.projectOverviewModule.ProjectContentModel;
+import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
+import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,16 +47,16 @@ public class ManagerUI extends UI {
 
         final VerticalLayout layout = new VerticalLayout();
 
-        final ProjectContentModel model = new ProjectContentModel();
-        model.setPassword(credentials.get("sqlpassword"));
-        model.setUser(credentials.get("sqluser"));
+        final ProjectContentModel model = new ProjectContentModel(credentials.get("sqluser"), credentials.get("sqlpassword"));
 
         final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
 
-        final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule(model);
+        final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule();
+
+        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
 
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOverviewModule);
+                projectOVPresenter);
 
         layout.addComponent(pieChartStatusModule);
         layout.addComponent(projectOverviewModule);

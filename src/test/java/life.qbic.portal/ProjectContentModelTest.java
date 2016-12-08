@@ -1,6 +1,7 @@
 package life.qbic.portal;
 
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
+import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,8 @@ import static org.junit.Assert.*;
  */
 public class ProjectContentModelTest {
 
-    ProjectContentModel projectContentModel = new ProjectContentModel();
+    ProjectContentModel projectContentModel = new ProjectContentModel("mariadbuser",
+            "dZAmDa9-Ysq_Zv1AGygQ");
 
     FreeformQuery freeformQueryMock = mock(FreeformQuery.class);
 
@@ -26,9 +28,7 @@ public class ProjectContentModelTest {
 
     @Before
     public void setUp() {
-        // Setup up credentials for test instance
-        projectContentModel.setPassword("dZAmDa9-Ysq_Zv1AGygQ");
-        projectContentModel.setUser("mariadbuser");
+
     }
 
     @Test
@@ -74,11 +74,9 @@ public class ProjectContentModelTest {
 
     @Test
     public void getKeyFigures() throws Exception {
-        projectContentModel.setUser("dummy");
-        projectContentModel.setPassword("password");
         projectContentModel.connectToDB();
         when(freeformQueryMock.getCount()).thenReturn(10);
-        assertTrue(projectContentModel.getKeyFigures().isEmpty());
+        assertFalse(projectContentModel.getKeyFigures().isEmpty());
     }
 
 }

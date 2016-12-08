@@ -1,7 +1,7 @@
 package life.qbic.portal;
 
 import com.vaadin.data.Property;
-import com.vaadin.ui.Upload;
+import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -14,38 +14,39 @@ public class MasterPresenter {
 
     private final PieChartStatusModule pieChartStatusModule;
 
-    private final ProjectOverviewModule projectOverviewModule;
+    private final ProjectOVPresenter projectOverviewPresenter;
 
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
     MasterPresenter(PieChartStatusModule pieChartStatusModule,
-                    ProjectOverviewModule projectOverviewModule){
+                    ProjectOVPresenter projectOverviewPresenter){
         this.pieChartStatusModule = pieChartStatusModule;
-        this.projectOverviewModule = projectOverviewModule;
+        this.projectOverviewPresenter = projectOverviewPresenter;
 
         init();
     }
 
     private void init(){
         try{
-            projectOverviewModule.init();
+            projectOverviewPresenter.init();
             log.info("Init projectoverview module successfully.");
         } catch (Exception exp){
             log.fatal("Init of projectoverview module failed. Reeason: " + exp.getMessage());
-            projectOverviewModule.sendError("Project Overview Module failed.", exp.getMessage());
+            projectOverviewPresenter.sendError("Project Overview Module failed.", exp.getMessage());
         }
 
-        projectOverviewModule.getPresenter().getStatusKeyFigures().forEach(pieChartStatusModule::update);
+        projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
         pieChartStatusModule.addPointClickListener(event -> {
-                projectOverviewModule.getPresenter().setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
+                projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
+
+        projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
 
         });
-        projectOverviewModule.getOverviewGrid().isChanged.addValueChangeListener(this::refreshModuleViews);
     }
 
     public void refreshModuleViews(Property.ValueChangeEvent event){
-        projectOverviewModule.getPresenter().getStatusKeyFigures().forEach(pieChartStatusModule::update);
+        projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
     }
 
 }

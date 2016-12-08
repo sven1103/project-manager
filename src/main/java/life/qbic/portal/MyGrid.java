@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class MyGrid extends Grid {
 
-    public ObjectProperty<Boolean> isChanged = new ObjectProperty<>(true, Boolean.class);
+    public final ObjectProperty<Boolean> isChanged = new ObjectProperty<>(true, Boolean.class);
 
     public MyGrid(){
         setEditorEnabled(true);

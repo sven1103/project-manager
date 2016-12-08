@@ -1,17 +1,15 @@
-package life.qbic.portal;
-
-/**
- * Created by sven1103 on 8/12/16.
- */
+package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.filter.Like;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.renderers.DateRenderer;
 
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
+
+import life.qbic.portal.MasterPresenter;
 import org.apache.commons.logging.Log;
 
 /**
@@ -21,9 +19,7 @@ import org.apache.commons.logging.Log;
  * the SQL connection and contains the information to be shown.
  * Issues and Errors will be directed to the user via a notification message.
  */
-class ProjectOVPresenter{
-
-    private final int timeout = 5000;
+public class ProjectOVPresenter{
 
     private final ProjectContentModel contentModel;
 
@@ -31,7 +27,9 @@ class ProjectOVPresenter{
 
     private final ProjectOverviewModule overViewModule;
 
-    ProjectOVPresenter(ProjectContentModel model,
+    private final ObjectProperty<Boolean> overviewModuleChanged = new ObjectProperty<>(true);
+
+    public ProjectOVPresenter(ProjectContentModel model,
                        ProjectOverviewModule overViewModule,
                        Log log){
         this.contentModel = model;
@@ -56,18 +54,20 @@ class ProjectOVPresenter{
 
         contentModel.loadData();
 
-        overViewModule.overviewGrid.setContainerDataSource(contentModel.getTableContent());
+        overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
+
+        overViewModule.getOverviewGrid().isChanged.addValueChangeListener(this::triggerViewPropertyChanged);
+
         renderTable();
 
     }
 
-
     private void renderTable(){
-        overViewModule.columnList = overViewModule.overviewGrid.getColumns();
+        overViewModule.columnList = overViewModule.getOverviewGrid().getColumns();
         overViewModule.columnList.forEach((Grid.Column column) -> {
             String colName = column.getPropertyId().toString();
             if (colName.contains("Date") || overViewModule.columnHide.contains(colName)) {
-                overViewModule.overviewGrid.removeColumn(colName);
+                overViewModule.getOverviewGrid().removeColumn(colName);
             }
         });
 
@@ -79,7 +79,7 @@ class ProjectOVPresenter{
         setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
         setFieldType("reportSent", ColumnFieldTypes.REPORTSENT);
 
-        overViewModule.overviewGrid.setCellStyleGenerator(cellReference -> {
+        overViewModule.getOverviewGrid().setCellStyleGenerator(cellReference -> {
             if ("no".equals(cellReference.getValue())){
                 return "v-grid-cell-no";
             }
@@ -96,15 +96,12 @@ class ProjectOVPresenter{
 
     private void setFieldType(String columnID, Field fieldType){
         try{
-            overViewModule.overviewGrid.getColumn(columnID).setEditorField(fieldType);
+            overViewModule.getOverviewGrid().getColumn(columnID).setEditorField(fieldType);
         } catch (Exception exp){
             log.error(String.format("Could not set editor field %s. Reason: %s", columnID, exp.getMessage()));
         }
     }
 
-    private void renderToDate(Grid.Column col){
-        col.setRenderer(new DateRenderer(new SimpleDateFormat("EEE, MMM d, YYYY")));
-    }
 
     public HashMap<String, Double> getStatusKeyFigures(){
         return contentModel.getKeyFigures();
@@ -128,5 +125,14 @@ class ProjectOVPresenter{
     public void sendInfo(String caption, String message){
         overViewModule.sendInfo(caption, message);
     }
+
+    void triggerViewPropertyChanged(Property.ValueChangeEvent event){
+        this.overviewModuleChanged.setValue(false ? overviewModuleChanged.getValue() : true);
+    }
+
+    public ObjectProperty<Boolean> getIsChangedFlag(){
+        return this.overviewModuleChanged;
+    }
+
 
 }
