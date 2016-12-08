@@ -1,4 +1,4 @@
-package life.qbic.portal;
+package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Field;

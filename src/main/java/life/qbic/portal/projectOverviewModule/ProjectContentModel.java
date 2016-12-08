@@ -1,4 +1,4 @@
-package life.qbic.portal;
+package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
@@ -16,7 +16,7 @@ import java.util.HashMap;
  * This class contains the business logic and is connected with the
  * MySQL database which contains all the information of QBiC projects.
  */
-class ProjectContentModel {
+public class ProjectContentModel {
 
     /**
      * Get static logger instance
@@ -50,14 +50,16 @@ class ProjectContentModel {
     private final String queryProgressStatus = String.format("SELECT * FROM %s WHERE projectStatus=\'in progress\'", tableName);
 
 
-    ProjectContentModel() {
+    public ProjectContentModel(String sqluser, String sqlpassword) {
+        this.user = sqluser;
+        this.password = sqlpassword;
     }
 
-    final void setPassword(String password){
+    public final void setPassword(String password){
         this.password = password;
     }
 
-    final void setUser(String user){
+    public final void setUser(String user){
         this.user = user;
     }
 
@@ -65,7 +67,7 @@ class ProjectContentModel {
      * Init database connection
      * @return True for success, false for failure
      */
-    final boolean connectToDB(){
+    public final boolean connectToDB(){
         try{
             pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
         } catch (Exception e){
@@ -78,7 +80,7 @@ class ProjectContentModel {
     /**
      * Load the complete data from the projectoverview table.
      */
-    final void loadData() throws SQLException{
+     public final void loadData() throws SQLException{
 
         query = new TableQuery(tableName, pool);
         query.setVersionColumn(primaryKey);
@@ -91,7 +93,7 @@ class ProjectContentModel {
      * Getter for the table content
      * @return The table content
      */
-    final SQLContainer getTableContent(){
+    public final SQLContainer getTableContent(){
         return this.tableContent;
     }
 
@@ -111,7 +113,7 @@ class ProjectContentModel {
      * the projects status 'open', 'in progress', 'closed'
      * @return A hashmap with key figures and names
      */
-    final HashMap<String, Double> getKeyFigures(){
+    public final HashMap<String, Double> getKeyFigures(){
         double projectsWithOpenStatus;
         double projectsWithClosedStatus;
         double projectsWithInProgressStatus;
@@ -130,11 +132,11 @@ class ProjectContentModel {
         return keyFigures;
     }
 
-    final void setDriverName(String driverName){
+    public final void setDriverName(String driverName){
         this.driverName = driverName;
     }
 
-    final void setConnectionURI(String connectionURI){
+    public final void setConnectionURI(String connectionURI){
         this.connectionURI = connectionURI;
     }
 

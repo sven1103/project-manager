@@ -14,24 +14,5 @@ public class ProjectOverviewModuleTest {
 
     }
 
-    @Test
-    public void getPresenter() throws Exception {
-
-    }
-
-    @Test
-    public void sendInfo() throws Exception {
-
-    }
-
-    @Test
-    public void sendError() throws Exception {
-
-    }
-
-    @Test
-    public void getOverviewGrid() throws Exception {
-
-    }
 
 }

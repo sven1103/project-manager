@@ -1,12 +1,12 @@
-package life.qbic.portal;
+package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.server.Page;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import life.qbic.portal.MyGrid;
+import life.qbic.portal.interfaces.ProjectOverviewI;
 
 import java.util.*;
 
@@ -16,19 +16,12 @@ import java.util.*;
  * module. It will display the database content of different projects
  * and its progress status.
  */
-class ProjectOverviewModule extends VerticalLayout{
+public class ProjectOverviewModule extends VerticalLayout implements ProjectOverviewI{
 
-    /**
-     * Get static logger instance
-     */
-    private final static Log log =
-            LogFactory.getLog(ProjectContentModel.class.getName());
-
-    private final ProjectContentModel contentModel;
 
     private final Notification info;
     private final Notification error;
-    final MyGrid overviewGrid;
+    private final MyGrid overviewGrid;
     List<Column> columnList;
 
     final HashSet columnHide = new HashSet<String>(){{
@@ -40,21 +33,17 @@ class ProjectOverviewModule extends VerticalLayout{
     }};
 
 
-    /**
-     * Constructor
-     * @param model The business logic
-     */
-    ProjectOverviewModule(ProjectContentModel model){
-        this.contentModel = model;
+    public ProjectOverviewModule(){
         this.overviewGrid = new MyGrid();
         this.info = new Notification("", "", Notification.Type.TRAY_NOTIFICATION);
         this.error = new Notification("", "", Notification.Type.ERROR_MESSAGE);
+        init();
     }
 
     /**
      * Make some init settings
      */
-    public void init() throws Exception{
+    public void init() {
 
         this.addComponents(overviewGrid);
         this.setSpacing(true);
@@ -90,12 +79,15 @@ class ProjectOverviewModule extends VerticalLayout{
         error.show(Page.getCurrent());
     }
 
-    /**
-     * Getter for the grid
-     * @return
-     */
-    MyGrid getOverviewGrid(){
+
+    @Override
+    public MyGrid getOverviewGrid(){
         return this.overviewGrid;
+    }
+
+    @Override
+    public List<Column> getColumnList() {
+        return this.columnList;
     }
 
 
