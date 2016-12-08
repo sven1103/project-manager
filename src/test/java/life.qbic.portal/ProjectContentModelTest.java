@@ -20,6 +20,10 @@ public class ProjectContentModelTest {
 
     FreeformQuery freeformQueryMock = mock(FreeformQuery.class);
 
+    String testUser = "mariadbuser";
+
+    String testPassword = "dZAmDa9-Ysq_Zv1AGygQ";
+
     @Before
     public void setUp() {
         // Setup up credentials for test instance
@@ -28,11 +32,9 @@ public class ProjectContentModelTest {
     }
 
     @Test
-    public void setPassword() throws NoSuchFieldException, IllegalAccessException {
+    public void setPassword() {
         projectContentModel.setPassword("helloWorld");
-        final Field field = projectContentModel.getClass().getDeclaredField("password");
-        field.setAccessible(true);
-        assertEquals("Passwords don't match", field.get(projectContentModel), "helloWorld");
+
     }
 
     @Test
