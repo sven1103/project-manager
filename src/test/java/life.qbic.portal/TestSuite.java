@@ -6,8 +6,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-        ProjectContentModelTest.class,
-        ProjectOverviewModuleTest.class
+        ProjectContentModelTest.class
 })
 
 
