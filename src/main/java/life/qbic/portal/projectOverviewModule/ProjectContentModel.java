@@ -112,21 +112,21 @@ class ProjectContentModel {
      * @return A hashmap with key figures and names
      */
     final HashMap<String, Double> getKeyFigures(){
-        double openStatus;
-        double closedStatus;
-        double progressStatus;
+        double projectsWithOpenStatus;
+        double projectsWithClosedStatus;
+        double projectsWithInProgressStatus;
         HashMap<String, Double> keyFigures = new HashMap<>();
         try{
-            openStatus = (double) makeFreeFormQuery(this.queryStatusOpen).getCount();
-            closedStatus = (double) makeFreeFormQuery(this.queryClosedStatus).getCount();
-            progressStatus = (double) makeFreeFormQuery(this.queryProgressStatus).getCount();
+            projectsWithOpenStatus = (double) makeFreeFormQuery(this.queryStatusOpen).getCount();
+            projectsWithClosedStatus = (double) makeFreeFormQuery(this.queryClosedStatus).getCount();
+            projectsWithInProgressStatus = (double) makeFreeFormQuery(this.queryProgressStatus).getCount();
         } catch (SQLException exp){
             log.error(String.format("Could not perform status query. Reason: %s", exp.getMessage()));
             return keyFigures;
         }
-        keyFigures.put("closed", closedStatus);
-        keyFigures.put("open", openStatus);
-        keyFigures.put("in progress", progressStatus);
+        keyFigures.put("closed", projectsWithClosedStatus);
+        keyFigures.put("open", projectsWithOpenStatus);
+        keyFigures.put("in progress", projectsWithInProgressStatus);
         return keyFigures;
     }
 
