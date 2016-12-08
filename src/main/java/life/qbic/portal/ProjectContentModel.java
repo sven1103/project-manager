@@ -138,7 +138,4 @@ class ProjectContentModel {
         this.connectionURI = connectionURI;
     }
 
-
-
-
 }
