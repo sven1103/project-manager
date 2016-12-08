@@ -9,7 +9,6 @@ import com.vaadin.ui.Grid;
 
 import java.util.HashMap;
 
-import life.qbic.portal.MasterPresenter;
 import org.apache.commons.logging.Log;
 
 /**
