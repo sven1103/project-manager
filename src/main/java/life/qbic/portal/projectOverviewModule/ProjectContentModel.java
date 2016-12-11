@@ -30,19 +30,7 @@ public class ProjectContentModel {
 
     final private String tableName = "projectsoverview";
 
-    private TableQuery query;
-
-    private String primaryKey = "projectID";
-
     private SQLContainer tableContent;
-
-    private String driverName = "com.mysql.jdbc.Driver";
-
-    private String connectionURI = "jdbc:mysql://portal-testing.am10.uni-tuebingen.de:3306/project_investigator_db";
-
-    private String password;
-
-    private String user;
 
     private final String queryStatusOpen = String.format("SELECT * FROM %s WHERE projectStatus=\'open\'", tableName);
 
@@ -56,57 +44,11 @@ public class ProjectContentModel {
         this.projectDatabaseConnector = projectDatabaseConnector;
     }
 
-    // TODO Remove this constructor once the databaseconnector works
-    public ProjectContentModel(String sqluser, String sqlpassword) {
-        this.user = sqluser;
-        this.password = sqlpassword;
-        this.projectDatabaseConnector = null;
-    }
-
     public final void init() throws SQLException, IllegalArgumentException{
         projectDatabaseConnector.connectToDatabase();
         this.tableContent = projectDatabaseConnector.loadCompleteTableData();
     }
 
-    public final void setPassword(String password){
-        this.password = password;
-    }
-
-    public final void setUser(String user){
-        this.user = user;
-    }
-
-
-    /**
-     * Init database connection
-     * @return True for success, false for failure
-     *//*
-    public final boolean connectToDB(){
-        try{
-            pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
-        } catch (Exception e){
-            log.fatal("SQL Connection to database failed!", e);
-            return false;
-        }
-        return true;
-    }
-    */
-
-    public final void connectToDB() throws SQLException{
-
-    }
-
-    /**
-     * Load the complete data from the projectoverview table.
-     */
-     public final void loadData() throws SQLException{
-
-        query = new TableQuery(tableName, pool);
-        query.setVersionColumn(primaryKey);
-        tableContent = new SQLContainer(query);
-        tableContent.setAutoCommit(true);
-
-    }
 
     /**
      * Getter for the table content
@@ -115,6 +57,7 @@ public class ProjectContentModel {
     public final SQLContainer getTableContent(){
         return this.tableContent;
     }
+
 
     /**
      * Performs a free form query to the database
@@ -151,12 +94,5 @@ public class ProjectContentModel {
         return keyFigures;
     }
 
-    public final void setDriverName(String driverName){
-        this.driverName = driverName;
-    }
-
-    public final void setConnectionURI(String connectionURI){
-        this.connectionURI = connectionURI;
-    }
 
 }

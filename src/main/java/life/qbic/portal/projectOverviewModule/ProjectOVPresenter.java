@@ -46,7 +46,7 @@ public class ProjectOVPresenter{
             return;
         }
         try{
-            contentModel.connectToDB();
+            contentModel.init();
         } catch (SQLException exp) {
             overViewModule.sendError("Database Error", "Could not connect to database :(");
             return;
@@ -54,8 +54,6 @@ public class ProjectOVPresenter{
 
         overViewModule.sendInfo("Good Job", "Successfully connected to database");
 
-
-        contentModel.loadData();
 
         overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
 
