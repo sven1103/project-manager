@@ -1,4 +1,4 @@
-package life.qbic.portal.interfaces;
+package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.ui.Grid;
 import life.qbic.portal.MyGrid;

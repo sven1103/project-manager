@@ -5,6 +5,7 @@ import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
+import life.qbic.portal.database.ProjectDatabaseConnector;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,10 +50,21 @@ public class ProjectContentModel {
 
     private final String queryProgressStatus = String.format("SELECT * FROM %s WHERE projectStatus=\'in progress\'", tableName);
 
+    private final ProjectDatabaseConnector projectDatabaseConnector;
 
+    public ProjectContentModel(ProjectDatabaseConnector projectDatabaseConnector){
+        this.projectDatabaseConnector = projectDatabaseConnector;
+    }
+
+    // TODO Remove this constructor once the databaseconnector works
     public ProjectContentModel(String sqluser, String sqlpassword) {
         this.user = sqluser;
         this.password = sqlpassword;
+        this.projectDatabaseConnector = null;
+    }
+
+    public final void init() throws SQLException, IllegalArgumentException{
+        projectDatabaseConnector.connectToDatabase();
     }
 
     public final void setPassword(String password){
@@ -63,10 +75,11 @@ public class ProjectContentModel {
         this.user = user;
     }
 
+
     /**
      * Init database connection
      * @return True for success, false for failure
-     */
+     *//*
     public final boolean connectToDB(){
         try{
             pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
@@ -75,6 +88,11 @@ public class ProjectContentModel {
             return false;
         }
         return true;
+    }
+    */
+
+    public final void connectToDB() throws SQLException{
+
     }
 
     /**
