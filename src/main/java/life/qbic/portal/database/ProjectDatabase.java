@@ -17,6 +17,8 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
 
     private String driverName = "com.mysql.jdbc.Driver";
 
+    private String connectionURI = "jdbc:mysql://portal-testing.am10.uni-tuebingen.de:3306/project_investigator_db";
+
     private JDBCConnectionPool pool;
 
     private ProjectDatabase(){}
