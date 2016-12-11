@@ -1,6 +1,8 @@
 package life.qbic.portal.database;
 
 
+import com.vaadin.data.util.sqlcontainer.SQLContainer;
+
 import java.sql.SQLException;
 
 /**
@@ -9,6 +11,8 @@ import java.sql.SQLException;
 public interface ProjectDatabaseConnector {
 
     void connectToDatabase() throws IllegalArgumentException, SQLException;
+
+    SQLContainer loadCompleteTableData() throws SQLException;
 
     void setConnectionCredentials(String user, String password);
 
