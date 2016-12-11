@@ -1,7 +1,9 @@
 package life.qbic.portal;
 
+import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -47,6 +49,26 @@ public class ProjectContentModelTest {
     @Test
     public void connection_to_database_was_successful() throws IllegalArgumentException, SQLException{
         projectContentModel.init();
+    }
+
+    @Test
+    public void load_data_from_SQL_database_was_successful() throws SQLException{
+        projectContentModel.init();
+    }
+
+    @Test (expected = SQLException.class)
+    public void load_data_from_SQL_database_and_receive_SQLException() throws SQLException{
+        doThrow(new SQLException()).when(projectDatabaseConnector).loadCompleteTableData();
+        projectContentModel.init();
+        fail("SQL connection should have been thrown here.");
+    }
+
+    @Test
+    public void load_data_and_receive_SQLcontainer_object() throws  SQLException{
+        SQLContainer testContainer = mock(SQLContainer.class);
+        when(projectDatabaseConnector.loadCompleteTableData()).thenReturn(testContainer);
+        projectContentModel.init();
+        Assert.assertNotNull(projectContentModel.getTableContent());
     }
 
 
