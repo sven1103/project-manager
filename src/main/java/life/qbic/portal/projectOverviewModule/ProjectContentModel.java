@@ -25,12 +25,11 @@ public class ProjectContentModel {
     private final static Log log =
             LogFactory.getLog(ProjectContentModel.class.getName());
 
-    final private String tableName = "projectsoverview";
-
     private String primaryKey = "projectID";
 
-    private SQLContainer tableContent;
+    final private String tableName = "projectsoverview";
 
+    private SQLContainer tableContent;
 
     private final String queryStatusOpen = String.format("SELECT * FROM %s WHERE projectStatus=\'open\'", tableName);
 
