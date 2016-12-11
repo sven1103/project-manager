@@ -1,11 +1,12 @@
 package life.qbic.portal;
 
-import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
+import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.Field;
 import java.sql.SQLException;
 
 import static org.mockito.Mockito.*;
@@ -17,66 +18,37 @@ import static org.junit.Assert.*;
  */
 public class ProjectContentModelTest {
 
-    ProjectContentModel projectContentModel = new ProjectContentModel("mariadbuser",
-            "dZAmDa9-Ysq_Zv1AGygQ");
+    @Mock
+    ProjectDatabaseConnector projectDatabaseConnector;
 
-    FreeformQuery freeformQueryMock = mock(FreeformQuery.class);
+    ProjectContentModel projectContentModel;
 
-    String testUser = "mariadbuser";
-
-    String testPassword = "dZAmDa9-Ysq_Zv1AGygQ";
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        projectContentModel = new ProjectContentModel(projectDatabaseConnector);
+    }
 
+    @Test (expected = SQLException.class)
+    public void connection_to_database_throws_SQLException() throws IllegalArgumentException, SQLException{
+        doThrow(new SQLException()).when(projectDatabaseConnector).connectToDatabase();
+        projectContentModel.init();
+        fail("SQL Exception should have been thrown.");
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void connection_to_database_throws_IllegalArgumentException() throws  IllegalArgumentException, SQLException{
+        doThrow(new IllegalArgumentException()).when(projectDatabaseConnector).connectToDatabase();
+        projectContentModel.init();
+        fail("SQL Exception should have been thrown.");
     }
 
     @Test
-    public void setPassword() {
-        projectContentModel.setPassword("helloWorld");
-
-    }
-
-    @Test
-    public void setUser() throws Exception {
-        projectContentModel.setUser("dummy");
-
-        final Field field = projectContentModel.getClass().getDeclaredField("user");
-        field.setAccessible(true);
-        assertEquals("Passwords don't match", field.get(projectContentModel), "dummy");
+    public void connection_to_database_was_successful() throws IllegalArgumentException, SQLException{
+        projectContentModel.init();
     }
 
 
-    @Test
-    public void connectToDB() {
-        assertTrue(projectContentModel.connectToDB());
-    }
-
-    @Test
-    public void loadData() throws SQLException, IllegalAccessException {
-        projectContentModel.connectToDB();
-        projectContentModel.loadData();
-
-        try {
-            Field field = projectContentModel.getClass().getDeclaredField("tableContent");
-            field.setAccessible(true);
-            assertNotNull(field.get(projectContentModel));
-            field.setAccessible(false);
-        } catch (NoSuchFieldException exp){
-            fail();
-        }
-    }
-
-    @Test
-    public void getTableContent() throws Exception {
-        assertNull(projectContentModel.getTableContent());
-    }
-
-    @Test
-    public void getKeyFigures() throws Exception {
-        projectContentModel.connectToDB();
-        when(freeformQueryMock.getCount()).thenReturn(10);
-        assertFalse(projectContentModel.getKeyFigures().isEmpty());
-    }
 
 }

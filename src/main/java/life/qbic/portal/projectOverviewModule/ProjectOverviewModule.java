@@ -6,7 +6,6 @@ import com.vaadin.ui.*;
 import com.vaadin.ui.Grid.Column;
 
 import life.qbic.portal.MyGrid;
-import life.qbic.portal.interfaces.ProjectOverviewI;
 
 import java.util.*;
 

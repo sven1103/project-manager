@@ -7,6 +7,7 @@ import com.vaadin.data.util.filter.Like;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.apache.commons.logging.Log;
@@ -44,12 +45,15 @@ public class ProjectOVPresenter{
             log.error("The model was not instantiated yet!");
             return;
         }
-        if(!contentModel.connectToDB()){
+        try{
+            contentModel.connectToDB();
+        } catch (SQLException exp) {
             overViewModule.sendError("Database Error", "Could not connect to database :(");
             return;
-        } else{
-            overViewModule.sendInfo("Good Job", "Successfully connected to database");
         }
+
+        overViewModule.sendInfo("Good Job", "Successfully connected to database");
+
 
         contentModel.loadData();
 
