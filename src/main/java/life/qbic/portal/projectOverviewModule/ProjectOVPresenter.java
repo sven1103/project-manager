@@ -8,7 +8,7 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 
@@ -46,16 +46,13 @@ public class ProjectOVPresenter{
             return;
         }
         try{
-            contentModel.connectToDB();
+            contentModel.init();
         } catch (SQLException exp) {
             overViewModule.sendError("Database Error", "Could not connect to database :(");
             return;
         }
 
         overViewModule.sendInfo("Good Job", "Successfully connected to database");
-
-
-        contentModel.loadData();
 
         overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
 
@@ -106,7 +103,7 @@ public class ProjectOVPresenter{
     }
 
 
-    public HashMap<String, Double> getStatusKeyFigures(){
+    public Map<String, Double> getStatusKeyFigures(){
         return contentModel.getKeyFigures();
     }
 
