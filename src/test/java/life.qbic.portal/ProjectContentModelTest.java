@@ -1,7 +1,9 @@
 package life.qbic.portal;
 
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.database.QuerryType;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,6 +38,7 @@ public class ProjectContentModelTest {
     public void connection_to_database_throws_SQLException() throws IllegalArgumentException, SQLException{
         doThrow(new SQLException()).when(projectDatabaseConnector).connectToDatabase();
         projectContentModel.init();
+        verify(projectDatabaseConnector).connectToDatabase();
         fail("SQL Exception should have been thrown.");
     }
 
@@ -43,6 +46,7 @@ public class ProjectContentModelTest {
     public void connection_to_database_throws_IllegalArgumentException() throws  IllegalArgumentException, SQLException{
         doThrow(new IllegalArgumentException()).when(projectDatabaseConnector).connectToDatabase();
         projectContentModel.init();
+        verify(projectDatabaseConnector).connectToDatabase();
         fail("SQL Exception should have been thrown.");
     }
 
@@ -54,6 +58,7 @@ public class ProjectContentModelTest {
     @Test
     public void load_data_from_SQL_database_was_successful() throws SQLException{
         projectContentModel.init();
+        verify(projectDatabaseConnector).connectToDatabase();
     }
 
     @Test (expected = SQLException.class)
@@ -61,6 +66,7 @@ public class ProjectContentModelTest {
         doThrow(new SQLException()).when(projectDatabaseConnector).loadCompleteTableData();
         projectContentModel.init();
         fail("SQL connection should have been thrown here.");
+        verify(projectDatabaseConnector).loadCompleteTableData();
     }
 
     @Test
@@ -69,6 +75,18 @@ public class ProjectContentModelTest {
         when(projectDatabaseConnector.loadCompleteTableData()).thenReturn(testContainer);
         projectContentModel.init();
         Assert.assertNotNull(projectContentModel.getTableContent());
+        verify(projectDatabaseConnector).loadCompleteTableData();
+    }
+
+    @Test
+    public void perform_free_form_query_and_succeed() throws SQLException{
+        FreeformQuery freeformQuery = mock(FreeformQuery.class);
+        when(freeformQuery.getCount()).thenReturn(2);
+        projectContentModel.init();
+        Assert.assertEquals("The count of the query ", Double.valueOf(2.0), projectContentModel.getKeyFigures().get("in progress"));
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED);
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS);
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN);
     }
 
 

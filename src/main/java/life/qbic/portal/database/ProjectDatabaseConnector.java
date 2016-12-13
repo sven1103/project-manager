@@ -2,6 +2,7 @@ package life.qbic.portal.database;
 
 
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 
 import java.sql.SQLException;
 
@@ -14,6 +15,7 @@ public interface ProjectDatabaseConnector {
 
     SQLContainer loadCompleteTableData() throws SQLException;
 
-    void setConnectionCredentials(String user, String password);
+    FreeformQuery makeFreeFormQuery(QuerryType type) throws SQLException;
+
 
 }

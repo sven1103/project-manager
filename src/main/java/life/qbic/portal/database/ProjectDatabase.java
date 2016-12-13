@@ -2,6 +2,8 @@ package life.qbic.portal.database;
 
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
+import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 
 import java.sql.SQLException;
@@ -21,13 +23,20 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
 
     private JDBCConnectionPool pool;
 
+    private String user;
+
+    private String password;
+
     private ProjectDatabase(){}
 
-    public ProjectDatabase(String user, String password){}
+    public ProjectDatabase(String user, String password){
+        this.user = user;
+        this.password = password;
+    }
 
     @Override
     public void connectToDatabase() throws IllegalArgumentException, SQLException {
-
+        pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
     }
 
     @Override
@@ -40,7 +49,8 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
     @Override
-    public void setConnectionCredentials(String user, String password) {
-
+    public FreeformQuery makeFreeFormQuery(QuerryType type) throws SQLException {
+        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type), pool, primaryKey);
     }
+
 }

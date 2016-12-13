@@ -8,7 +8,7 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 
@@ -103,7 +103,7 @@ public class ProjectOVPresenter{
     }
 
 
-    public HashMap<String, Double> getStatusKeyFigures(){
+    public Map<String, Double> getStatusKeyFigures(){
         return contentModel.getKeyFigures();
     }
 
