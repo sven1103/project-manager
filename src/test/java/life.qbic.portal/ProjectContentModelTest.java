@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import static org.mockito.Mockito.*;
 
@@ -27,11 +28,21 @@ public class ProjectContentModelTest {
 
     ProjectContentModel projectContentModel;
 
+    HashMap<QuerryType, String> dummyKeyFigures = new HashMap<>();
+
+    @Mock
+    FreeformQuery testQuerry;
+
 
     @Before
-    public void setUp() {
+    public void setUp() throws SQLException{
         MockitoAnnotations.initMocks(this);
         projectContentModel = new ProjectContentModel(projectDatabaseConnector);
+        when(testQuerry.getCount()).thenReturn(1);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN)).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS)).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED)).thenReturn(testQuerry);
+
     }
 
     @Test (expected = SQLException.class)
@@ -80,10 +91,8 @@ public class ProjectContentModelTest {
 
     @Test
     public void perform_free_form_query_and_succeed() throws SQLException{
-        FreeformQuery freeformQuery = mock(FreeformQuery.class);
-        when(freeformQuery.getCount()).thenReturn(2);
         projectContentModel.init();
-        Assert.assertEquals("The count of the query ", Double.valueOf(2.0), projectContentModel.getKeyFigures().get("in progress"));
+        Assert.assertEquals("The count of the query ", Double.valueOf(1.0), projectContentModel.getKeyFigures().get("in progress"));
         verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED);
         verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS);
         verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN);
