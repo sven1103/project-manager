@@ -17,6 +17,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -72,7 +73,7 @@ public class ManagerUI extends UI {
 
 
     private Map<String, String> getCredentialsFromEnvVariables(){
-        final Map<String, String> credentials = new HashedMap();
+        final Map<String, String> credentials = new HashMap<>();
         credentials.put("sqluser", System.getProperty("sqluser"));
         credentials.put("sqlpassword", System.getProperty("sqlpassword"));
 
