@@ -40,7 +40,7 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
     @Override
-    public SQLContainer loadCompleteTableData() throws SQLException {
+    public SQLContainer loadCompleteTableData() throws RuntimeException, SQLException {
         TableQuery query = new TableQuery(tableName, pool);
         query.setVersionColumn(primaryKey);
         SQLContainer tableContent = new SQLContainer(query);
