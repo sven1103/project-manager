@@ -3,7 +3,6 @@ package life.qbic.portal.database;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by sven1103 on 14/12/16.

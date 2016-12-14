@@ -23,7 +23,7 @@ public class ProjectOverviewModule extends VerticalLayout implements ProjectOver
     private final MyGrid overviewGrid;
     List<Column> columnList;
 
-    final HashSet columnHide = new HashSet<String>(){{
+    public final HashSet columnHide = new HashSet<String>(){{
         add("projectID");
         add("investigatorID");
         add("instrumentID");
