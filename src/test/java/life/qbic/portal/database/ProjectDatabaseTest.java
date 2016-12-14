@@ -1,9 +1,12 @@
 package life.qbic.portal.database;
 
+import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
+import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.SQLException;
@@ -19,6 +22,8 @@ public class ProjectDatabaseTest {
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
+        Mockito.mock(TableQuery.class);
+        Mockito.mock(SQLContainer.class);
         projectDatabase = new ProjectDatabase("test", "123");
     }
 
