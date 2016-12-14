@@ -27,7 +27,7 @@ public class ProjectContentModel{
     public final void init() throws SQLException, IllegalArgumentException{
         projectDatabaseConnector.connectToDatabase();
         this.tableContent = projectDatabaseConnector.loadCompleteTableData();
-        this.querryKeyFigures();
+        querryKeyFigures();
     }
 
     /**
