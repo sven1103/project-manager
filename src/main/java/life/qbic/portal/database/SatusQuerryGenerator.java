@@ -16,8 +16,8 @@ public class SatusQuerryGenerator {
         querryMap.put(QuerryType.PROJECTSTATUS_CLOSED, "SELECT * FROM %s WHERE projectStatus=\'closed\'");
     }
 
-    public static final String getQuerryFromType(QuerryType type){
-        return querryMap.get(type);
+    public static final String getQuerryFromType(QuerryType type, String table){
+        return String.format(querryMap.get(type), table);
     }
 
 }

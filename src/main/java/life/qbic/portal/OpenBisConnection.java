@@ -7,9 +7,20 @@ import life.qbic.openbis.openbisclient.OpenBisClient;
  */
 public class OpenBisConnection {
 
-    //private final OpenBisClient openBisClient;
+    private OpenBisClient openBisClient;
 
     public boolean initConnection(String user, String password, String uri) {
-        return false;
+
+        if (openBisClient != null){
+            openBisClient.logout();
+        } else{
+            try{
+                openBisClient = new OpenBisClient(user, password, uri);
+            } catch (Exception exp){
+
+                return false;
+            }
+        }
+        return true;
     }
 }

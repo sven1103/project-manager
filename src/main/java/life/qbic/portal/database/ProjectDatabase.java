@@ -50,7 +50,7 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
 
     @Override
     public FreeformQuery makeFreeFormQuery(QuerryType type) throws SQLException {
-        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type), pool, primaryKey);
+        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, this.tableName), pool, primaryKey);
     }
 
 }

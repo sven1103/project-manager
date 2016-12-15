@@ -27,9 +27,9 @@ public class OpenBisConnectionTest{
 
     @Test
     public void when_openBis_connection_successful_return_true(){
-        /*OpenBisConnection openBisConnection = new OpenBisConnection();
+        OpenBisConnection openBisConnection = new OpenBisConnection();
         assertTrue(openBisConnection.initConnection(properties.getProperty("openbisuser"),
-                properties.getProperty("testPassword"), properties.getProperty("openbisURI")));*/
+                properties.getProperty("testPassword"), properties.getProperty("openbisURI")));
     }
 
 }

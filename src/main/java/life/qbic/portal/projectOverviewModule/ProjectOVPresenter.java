@@ -48,6 +48,7 @@ public class ProjectOVPresenter{
         try{
             contentModel.init();
         } catch (SQLException exp) {
+            log.error(exp);
             overViewModule.sendError("Database Error", "Could not connect to database :(");
             return;
         }
