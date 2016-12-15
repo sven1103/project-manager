@@ -16,13 +16,12 @@ public class OpenBisConnection {
 
         if (this.openBisClient != null){
             this.openBisClient.logout();
-        } else{
-            try{
-                this.openBisClient = openBisClient;
-                this.openBisClient.login();
-            } catch (Exception exp){
-                return false;
-            }
+        }
+        try{
+            this.openBisClient = openBisClient;
+            this.openBisClient.login();
+        } catch (Exception exp){
+            return false;
         }
         return true;
     }
