@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.nio.file.Files;
@@ -44,6 +45,13 @@ public class OpenBisConnectionTest{
     @Test
     public void when_openBis_connection_successful_return_true(){
         assertTrue(openBisConnection.initConnection(openBisClient));
+    }
+
+    @Test
+    public void when_connection_is_already_there_logout_first(){
+        openBisConnection.initConnection(openBisClient);
+        openBisConnection.initConnection(openBisClient);
+        Mockito.verify(openBisClient).logout();
     }
 
     @Test
