@@ -30,7 +30,7 @@ public class ProjectOverviewModuleTest {
     public void test_contructor_variable_set_up(){
         Assert.assertEquals(projectOverviewModule.getComponentCount(), 1);
         Assert.assertNotNull(projectOverviewModule.getOverviewGrid());
-        Assert.assertNotNull(projectOverviewModule.getColumnList());
+        Assert.assertNull(projectOverviewModule.getColumnList());
     }
 
 
