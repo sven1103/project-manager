@@ -49,7 +49,9 @@ public class OpenBisConnectionTest{
 
     @Test
     public void when_connection_is_already_there_logout_first(){
+        openBisConnection = new OpenBisConnection();
         openBisConnection.initConnection(openBisClient);
+        Mockito.verify(openBisClient).login();
         openBisConnection.initConnection(openBisClient);
         Mockito.verify(openBisClient).logout();
     }
