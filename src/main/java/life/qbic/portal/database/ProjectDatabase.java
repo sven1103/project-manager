@@ -13,10 +13,6 @@ import java.sql.SQLException;
  */
 public class ProjectDatabase implements ProjectDatabaseConnector {
 
-    private final String tableName = "projectsoverview";
-
-    private String primaryKey = "projectID";
-
     private String driverName = "com.mysql.jdbc.Driver";
 
     private String connectionURI = "jdbc:mysql://portal-testing.am10.uni-tuebingen.de:3306/project_investigator_db";
@@ -40,7 +36,7 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
     @Override
-    public SQLContainer loadCompleteTableData() throws RuntimeException, SQLException {
+    public SQLContainer loadCompleteTableData(String tableName, String primaryKey) throws RuntimeException, SQLException {
         TableQuery query = new TableQuery(tableName, pool);
         query.setVersionColumn(primaryKey);
         SQLContainer tableContent = new SQLContainer(query);
@@ -49,8 +45,8 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
     @Override
-    public FreeformQuery makeFreeFormQuery(QuerryType type) throws SQLException {
-        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, this.tableName), pool, primaryKey);
+    public FreeformQuery makeFreeFormQuery(QuerryType type, String tableName, String primaryKey) throws SQLException {
+        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, tableName), pool, primaryKey);
     }
 
 }

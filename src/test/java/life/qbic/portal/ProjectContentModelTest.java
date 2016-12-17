@@ -39,9 +39,9 @@ public class ProjectContentModelTest {
         MockitoAnnotations.initMocks(this);
         projectContentModel = new ProjectContentModel(projectDatabaseConnector);
         when(testQuerry.getCount()).thenReturn(1);
-        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN)).thenReturn(testQuerry);
-        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS)).thenReturn(testQuerry);
-        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED)).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, "projectsoverview", "projectID")).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, "projectsoverview", "projectID")).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, "projectsoverview", "projectID")).thenReturn(testQuerry);
 
     }
 
@@ -62,40 +62,40 @@ public class ProjectContentModelTest {
     }
 
     @Test
-    public void connection_to_database_was_successful() throws IllegalArgumentException, SQLException{
+    public void connection_to_database_was_successful() throws IllegalArgumentException, SQLException, NullPointerException{
         projectContentModel.init();
     }
 
     @Test
-    public void load_data_from_SQL_database_was_successful() throws SQLException{
+    public void load_data_from_SQL_database_was_successful() throws SQLException, NullPointerException{
         projectContentModel.init();
         verify(projectDatabaseConnector).connectToDatabase();
     }
 
     @Test (expected = SQLException.class)
-    public void load_data_from_SQL_database_and_receive_SQLException() throws SQLException{
-        doThrow(new SQLException()).when(projectDatabaseConnector).loadCompleteTableData();
+    public void load_data_from_SQL_database_and_receive_SQLException() throws SQLException, NullPointerException{
+        doThrow(new SQLException()).when(projectDatabaseConnector).loadCompleteTableData("projectsoverview", "projectID");
         projectContentModel.init();
         fail("SQL connection should have been thrown here.");
-        verify(projectDatabaseConnector).loadCompleteTableData();
+        verify(projectDatabaseConnector).loadCompleteTableData("projectsoverview", "projectID");
     }
 
     @Test
-    public void load_data_and_receive_SQLcontainer_object() throws  SQLException{
+    public void load_data_and_receive_SQLcontainer_object() throws  SQLException, NullPointerException{
         SQLContainer testContainer = mock(SQLContainer.class);
-        when(projectDatabaseConnector.loadCompleteTableData()).thenReturn(testContainer);
+        when(projectDatabaseConnector.loadCompleteTableData("projectsoverview", "projectID")).thenReturn(testContainer);
         projectContentModel.init();
         Assert.assertNotNull(projectContentModel.getTableContent());
-        verify(projectDatabaseConnector).loadCompleteTableData();
+        verify(projectDatabaseConnector).loadCompleteTableData("projectsoverview", "projectID");
     }
 
     @Test
     public void perform_free_form_query_and_succeed() throws SQLException{
         projectContentModel.init();
         Assert.assertEquals("The count of the query ", Double.valueOf(1.0), projectContentModel.getKeyFigures().get("in progress"));
-        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED);
-        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS);
-        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN);
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, "projectsoverview", "projectID");
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, "projectsoverview", "projectID");
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, "projectsoverview", "projectID");
     }
 
 

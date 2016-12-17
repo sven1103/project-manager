@@ -13,9 +13,9 @@ public interface ProjectDatabaseConnector {
 
     void connectToDatabase() throws IllegalArgumentException, SQLException;
 
-    SQLContainer loadCompleteTableData() throws SQLException;
+    SQLContainer loadCompleteTableData(String tableName, String primaryKey) throws SQLException;
 
-    FreeformQuery makeFreeFormQuery(QuerryType type) throws SQLException;
+    FreeformQuery makeFreeFormQuery(QuerryType type, String tableName, String primaryKey) throws SQLException;
 
 
 }

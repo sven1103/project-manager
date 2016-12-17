@@ -30,8 +30,6 @@ public class ProjectDatabaseTest {
 
     @Test
     public void test_presence_of_member_variables() throws NoSuchFieldException{
-        projectDatabase.getClass().getDeclaredField("tableName");
-        projectDatabase.getClass().getDeclaredField("primaryKey");
         projectDatabase.getClass().getDeclaredField("driverName");
         projectDatabase.getClass().getDeclaredField("connectionURI");
         projectDatabase.getClass().getDeclaredField("pool");
@@ -47,7 +45,7 @@ public class ProjectDatabaseTest {
     @Test (expected = RuntimeException.class)
     public void test_loading_of_table_data() throws SQLException, RuntimeException{
         projectDatabase.connectToDatabase();
-        projectDatabase.loadCompleteTableData();
+        projectDatabase.loadCompleteTableData("testTable", "testID");
     }
 
     public void make_a_successfull_free_form_query() throws SQLException{

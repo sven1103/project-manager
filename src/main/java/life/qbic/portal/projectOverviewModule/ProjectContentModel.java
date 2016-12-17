@@ -14,6 +14,10 @@ import java.util.Map;
  */
 public class ProjectContentModel{
 
+    private String tableName = "projectsoverview";
+
+    private String primaryKey = "projectID";
+
     private SQLContainer tableContent;
 
     private final ProjectDatabaseConnector projectDatabaseConnector;
@@ -26,7 +30,7 @@ public class ProjectContentModel{
 
     public final void init() throws SQLException, IllegalArgumentException{
         projectDatabaseConnector.connectToDatabase();
-        this.tableContent = projectDatabaseConnector.loadCompleteTableData();
+        this.tableContent = projectDatabaseConnector.loadCompleteTableData(tableName, primaryKey);
         querryKeyFigures();
     }
 
@@ -49,9 +53,9 @@ public class ProjectContentModel{
         double projectsWithInProgressStatus;
         HashMap<String, Double> keyFigures = new HashMap<>();
 
-        projectsWithOpenStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN).getCount();
-        projectsWithClosedStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED).getCount();
-        projectsWithInProgressStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS).getCount();
+        projectsWithOpenStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, tableName, primaryKey).getCount();
+        projectsWithClosedStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, tableName, primaryKey).getCount();
+        projectsWithInProgressStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, tableName, primaryKey).getCount();
 
         keyFigures.put("closed", projectsWithClosedStatus);
         keyFigures.put("open", projectsWithOpenStatus);
