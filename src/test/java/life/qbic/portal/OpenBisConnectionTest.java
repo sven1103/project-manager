@@ -68,6 +68,7 @@ public class OpenBisConnectionTest{
         Assert.assertNull(openBisConnection.getListOfProjects());
         openBisConnection.initConnection(openBisClient);
         Assert.assertEquals(0, openBisConnection.getListOfProjects().size());
+        openBisConnection.getListOfProjects();
     }
 
 }
