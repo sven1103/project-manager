@@ -10,6 +10,7 @@ import com.vaadin.ui.Grid;
 import java.sql.SQLException;
 import java.util.Map;
 
+import life.qbic.portal.database.WrongArgumentSettingsException;
 import org.apache.commons.logging.Log;
 
 /**
@@ -50,6 +51,10 @@ public class ProjectOVPresenter{
         } catch (SQLException exp) {
             log.error(exp);
             overViewModule.sendError("Database Error", "Could not connect to database :(");
+            return;
+        } catch (WrongArgumentSettingsException exp){
+            log.error(exp);
+            overViewModule.sendError("Database Error", "Could not connect to database");
             return;
         }
 
@@ -128,7 +133,8 @@ public class ProjectOVPresenter{
     }
 
     void triggerViewPropertyChanged(Property.ValueChangeEvent event){
-        this.overviewModuleChanged.setValue(false ? overviewModuleChanged.getValue() : true);
+        this.contentModel.updateFigure();
+        this.overviewModuleChanged.setValue(overviewModuleChanged.getValue() ? false : true);
     }
 
     public ObjectProperty<Boolean> getIsChangedFlag(){
