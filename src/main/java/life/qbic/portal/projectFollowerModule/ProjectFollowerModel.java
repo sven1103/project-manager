@@ -1,6 +1,6 @@
 package life.qbic.portal.projectFollowerModule;
 
-import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
+import life.qbic.portal.OpenBisConnection;
 import life.qbic.portal.database.ProjectDatabase;
 import life.qbic.portal.database.QuerryType;
 import life.qbic.portal.database.WrongArgumentSettingsException;
@@ -17,18 +17,22 @@ import java.util.Set;
 public class ProjectFollowerModel {
 
     private final ProjectDatabase projectDatabase;
+
     private final Set<String> allFollingProjects = new HashSet<>();
     private final HashMap<String, String> querySettings = new HashMap<>();
+
 
     public ProjectFollowerModel(ProjectDatabase projectDatabase){
         this.projectDatabase = projectDatabase;
     }
 
+
     public Set<String> getAllFollowingProjects(){
         return allFollingProjects;
     }
 
-    public void loadFollowingProjects(String sqlTable, String userID, String primaryKey)
+
+    public ProjectFollowerModel loadFollowingProjects(String sqlTable, String userID, String primaryKey)
             throws SQLException, WrongArgumentSettingsException{
         projectDatabase.connectToDatabase();
 
@@ -43,6 +47,8 @@ public class ProjectFollowerModel {
             followingProjectsQuery.next();
         }
         allFollingProjects.add(followingProjectsQuery.getString("project_id"));
+
+        return this;
     }
 
 }

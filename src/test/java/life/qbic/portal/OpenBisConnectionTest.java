@@ -63,7 +63,7 @@ public class OpenBisConnectionTest{
     }
 
     @Test
-    public void get_list_of_available_projetcs(){
+    public void get_list_of_available_projects(){
         openBisConnection = new OpenBisConnection();
         Assert.assertNull(openBisConnection.getListOfProjects());
         openBisConnection.initConnection(openBisClient);
