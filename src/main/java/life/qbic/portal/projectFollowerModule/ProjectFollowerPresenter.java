@@ -1,5 +1,6 @@
 package life.qbic.portal.projectFollowerModule;
 
+import ch.systemsx.cisd.openbis.generic.shared.basic.dto.Project;
 import com.vaadin.data.util.BeanItemContainer;
 import life.qbic.portal.MyGrid;
 import life.qbic.portal.OpenBisConnection;
@@ -31,15 +32,13 @@ public class ProjectFollowerPresenter {
 
     public void startOrchestration() throws NullPointerException, SQLException, WrongArgumentSettingsException{
 
-        MyGrid projectGrid = view.getProjectGrid();
-
         BeanItemContainer<ProjectBean> projectBeanBeanItemContainer = connection.getListOfProjects();
 
         Set<String> followingProjects = model.loadFollowingProjects(sqlTableName, userID, primaryKey).getAllFollowingProjects();
 
-        if (projectBeanBeanItemContainer.size() > 0){
-            projectGrid.setContainerDataSource(projectBeanBeanItemContainer);
-        }
+        view.getProjectComboBox().setContainerDataSource(projectBeanBeanItemContainer);
+        view.getProjectComboBox().setItemCaptionPropertyId("code");
+
 
     }
 

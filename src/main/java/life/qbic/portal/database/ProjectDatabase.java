@@ -32,10 +32,11 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     @Override
     public boolean connectToDatabase() throws IllegalArgumentException, SQLException {
         if (pool == null){
-            pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
+            pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 5, 10);
             return true;
         }
         return false;
+
     }
 
     @Override
@@ -49,6 +50,7 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
 
     @Override
     public FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey) throws SQLException, WrongArgumentSettingsException{
+        System.out.println(SatusQuerryGenerator.getQuerryFromType(type, arguments));
         return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, arguments), pool, primaryKey);
     }
 

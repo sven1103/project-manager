@@ -58,7 +58,7 @@ public class ProjectOVPresenter{
             return;
         }
 
-        overViewModule.sendInfo("Good Job", "Successfully connected to database");
+        log.info("Successfully connected to database");
 
         overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
 

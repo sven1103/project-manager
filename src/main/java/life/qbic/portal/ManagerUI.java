@@ -6,19 +6,36 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
+import life.qbic.openbis.openbisclient.OpenBisClient;
 import life.qbic.portal.database.ProjectDatabase;
+import life.qbic.portal.database.WrongArgumentSettingsException;
+import life.qbic.portal.projectFollowerModule.ProjectFollowerModel;
+import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
+import life.qbic.portal.projectFollowerModule.ProjectFollowerView;
+import life.qbic.portal.projectFollowerModule.ProjectFollowerViewImpl;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.vaadin.sliderpanel.SliderPanel;
+import org.vaadin.sliderpanel.SliderPanelBuilder;
+import org.vaadin.sliderpanel.SliderPanelStyles;
+import org.vaadin.sliderpanel.client.SliderMode;
+import org.vaadin.sliderpanel.client.SliderTabPosition;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.rmi.server.ExportException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -48,9 +65,18 @@ public class ManagerUI extends UI {
             System.exit(1);
         }
 
-        final VerticalLayout layout = new VerticalLayout();
+        final VerticalLayout mainFrame = new VerticalLayout();
+
+        final VerticalLayout sliderFrame = new VerticalLayout();
+
+        final VerticalLayout mainContent = new VerticalLayout();
 
         final ProjectDatabase projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
+        try{
+            projectDatabase.connectToDatabase();
+        } catch (SQLException exp){
+            System.err.println("Could not connect to SQL project database. Reason: " + exp.getMessage());
+        }
 
         final ProjectContentModel model = new ProjectContentModel(projectDatabase);
 
@@ -63,12 +89,54 @@ public class ManagerUI extends UI {
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
                 projectOVPresenter);
 
-        layout.addComponent(pieChartStatusModule);
-        layout.addComponent(projectOverviewModule);
+        final ProjectFollowerView followerView = new ProjectFollowerViewImpl()
+                .setSpaceCaption("Institution")
+                .setProjectCaption("Project")
+                .build();
 
-        layout.setMargin(true);
-        layout.setSpacing(true);
-        setContent(layout);
+        final Properties properties = getPropertiesFromFile("/etc/openbis_production.properties");
+
+        final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("openbisuser"),
+                properties.getProperty("openbispw"), properties.getProperty("openbisURI"));
+
+        final OpenBisConnection openBisConnection = new OpenBisConnection();
+        openBisConnection.initConnection(openBisClient);
+
+        final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
+
+        final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
+        followerPresenter.setUserID("zxmqp08").setSQLTableName("followingprojects").setPrimaryKey("id");
+
+        try{
+            followerPresenter.startOrchestration();
+        } catch (SQLException exp){
+            System.err.println("Could not connect to target SQL database. Reason: " + exp.getMessage());
+            exp.printStackTrace();
+        } catch (WrongArgumentSettingsException exp){
+            System.err.println("You provided the wrong arguments for the openbis connection. Reason:" + exp.getMessage());
+        } catch (Exception exp){
+            System.err.println("Un enexpected Exception occured.");
+            exp.printStackTrace();
+        }
+
+
+        final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())
+                .caption("Follow more projects")
+                .mode(SliderMode.TOP)
+                .tabPosition(SliderTabPosition.MIDDLE)
+                .style(SliderPanelStyles.COLOR_BLUE)
+                .animationDuration(100).tabSize(200)
+                .build();
+
+        sliderFrame.addComponent(sliderPanel);
+        mainContent.addComponent(pieChartStatusModule);
+        mainContent.addComponent(projectOverviewModule);
+        mainFrame.addComponent(sliderFrame);
+        mainFrame.addComponent(mainContent);
+
+        mainFrame.setExpandRatio(mainContent, 1);
+        mainFrame.setSizeFull();
+        setContent(mainFrame);
     }
 
 
@@ -83,6 +151,18 @@ public class ManagerUI extends UI {
             return null;
         }
     }
+
+    private Properties getPropertiesFromFile(String path){
+        Properties properties = new Properties();
+        try{
+            properties.load(Files.newBufferedReader(Paths.get(path)));
+        } catch (Exception exp){
+            System.err.println(("Could not open or read from properties file!"));
+        }
+
+        return properties;
+    }
+
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = ManagerUI.class, productionMode = false)

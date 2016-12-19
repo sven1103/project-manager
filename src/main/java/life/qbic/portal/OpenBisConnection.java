@@ -39,9 +39,11 @@ public class OpenBisConnection {
         if (projectBeanBeanItemContainer.size() > 0) {
             projectBeanBeanItemContainer.removeAllItems();
         }
-        openBisClient.listProjects().forEach(project ->
-                projectBeanBeanItemContainer.addItem(
-                        ProjectToProjectBeanConverter.convertToProjectBean(project)));
+        openBisClient.listProjects().forEach(project -> {
+            projectBeanBeanItemContainer.addBean(
+                    ProjectToProjectBeanConverter.convertToProjectBean(project));
+        });
+
 
         return projectBeanBeanItemContainer;
     }

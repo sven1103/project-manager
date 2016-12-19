@@ -1,5 +1,6 @@
 package life.qbic.portal.projectFollowerModule;
 
+import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import life.qbic.portal.OpenBisConnection;
 import life.qbic.portal.database.ProjectDatabase;
 import life.qbic.portal.database.QuerryType;
@@ -39,8 +40,17 @@ public class ProjectFollowerModel {
         querySettings.put("table", sqlTable);
         querySettings.put("user_id", userID);
 
-        ResultSet followingProjectsQuery = projectDatabase.makeFreeFormQuery(QuerryType.GET_FOLLOWING_PROJECTS,
-                querySettings, primaryKey).getResults(0,0);
+        FreeformQuery query = projectDatabase.makeFreeFormQuery(QuerryType.GET_FOLLOWING_PROJECTS,
+                querySettings, primaryKey);
+
+
+        System.out.println(query.getCount());
+
+        query.beginTransaction();
+        ResultSet followingProjectsQuery = query.getResults(0,0);
+        query.commit();
+
+        followingProjectsQuery.first();
 
         while(!followingProjectsQuery.isLast()){
             allFollingProjects.add(followingProjectsQuery.getString("project_id"));
