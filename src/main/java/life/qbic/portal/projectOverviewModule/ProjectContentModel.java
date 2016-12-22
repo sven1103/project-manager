@@ -6,7 +6,9 @@ import life.qbic.portal.database.QuerryType;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,12 +32,15 @@ public class ProjectContentModel{
 
     private HashMap<String, Double> keyFigures;
 
+    private List<String> followingProjects;
+
     public ProjectContentModel(ProjectDatabaseConnector projectDatabaseConnector){
         this.projectDatabaseConnector = projectDatabaseConnector;
     }
 
     public final void init() throws SQLException, IllegalArgumentException, WrongArgumentSettingsException{
         projectDatabaseConnector.connectToDatabase();
+        followingProjects = new ArrayList<>();
         this.tableContent = projectDatabaseConnector.loadCompleteTableData(queryArguments.get("table"), primaryKey);
         querryKeyFigures();
     }

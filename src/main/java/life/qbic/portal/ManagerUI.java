@@ -2,6 +2,12 @@ package life.qbic.portal;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.addon.charts.ChartOptions;
+import com.vaadin.addon.charts.themes.GrayTheme;
+import com.vaadin.addon.charts.themes.GridTheme;
+import com.vaadin.addon.charts.themes.HighChartsDefaultTheme;
+import com.vaadin.addon.charts.themes.SkiesTheme;
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
@@ -29,9 +35,7 @@ import org.vaadin.sliderpanel.client.SliderMode;
 import org.vaadin.sliderpanel.client.SliderTabPosition;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.rmi.server.ExportException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +49,7 @@ import java.util.Properties;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
+@PreserveOnRefresh
 public class ManagerUI extends UI {
 
     /**
@@ -119,14 +124,14 @@ public class ManagerUI extends UI {
             exp.printStackTrace();
         }
 
-
         final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())
                 .caption("Follow more projects")
                 .mode(SliderMode.TOP)
                 .tabPosition(SliderTabPosition.MIDDLE)
-                .style(SliderPanelStyles.COLOR_BLUE)
-                .animationDuration(100).tabSize(200)
-                .build();
+                .style(SliderPanelStyles.COLOR_GRAY)
+                .animationDuration(100).build();
+
+        //ChartOptions.get().setTheme(new GridTheme());
 
         sliderFrame.addComponent(sliderPanel);
         mainContent.addComponent(pieChartStatusModule);

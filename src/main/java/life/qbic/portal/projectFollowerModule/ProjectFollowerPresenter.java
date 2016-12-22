@@ -1,14 +1,14 @@
 package life.qbic.portal.projectFollowerModule;
 
-import ch.systemsx.cisd.openbis.generic.shared.basic.dto.Project;
 import com.vaadin.data.util.BeanItemContainer;
-import life.qbic.portal.MyGrid;
+import com.vaadin.data.util.ObjectProperty;
 import life.qbic.portal.OpenBisConnection;
 import life.qbic.portal.beans.ProjectBean;
 import life.qbic.portal.database.WrongArgumentSettingsException;
+import org.vaadin.teemu.switchui.Switch;
 
 import java.sql.SQLException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by sven on 12/18/16.
@@ -21,12 +21,17 @@ public class ProjectFollowerPresenter {
     private String sqlTableName;
     private String userID;
     private String primaryKey;
+    private Map<String, List<String>> spaceProjectMap;
+    private Set<String> followingProjects;
+    private String currentProject;
+    private ObjectProperty<Boolean> isChangedFlag;
 
     public ProjectFollowerPresenter(ProjectFollowerView view, ProjectFollowerModel model,
                                     OpenBisConnection openBisConnection){
         this.view = view;
         this.model = model;
         this.connection = openBisConnection;
+        this.isChangedFlag = new ObjectProperty<Boolean>(false);
     }
 
 
@@ -34,11 +39,69 @@ public class ProjectFollowerPresenter {
 
         BeanItemContainer<ProjectBean> projectBeanBeanItemContainer = connection.getListOfProjects();
 
-        Set<String> followingProjects = model.loadFollowingProjects(sqlTableName, userID, primaryKey).getAllFollowingProjects();
+        followingProjects = model.loadFollowingProjects(sqlTableName, userID, primaryKey).getAllFollowingProjects();
 
-        view.getProjectComboBox().setContainerDataSource(projectBeanBeanItemContainer);
-        view.getProjectComboBox().setItemCaptionPropertyId("code");
+        updateSpaceProjectMap(projectBeanBeanItemContainer);
 
+        view.getSpaceComboBox().addItems(spaceProjectMap.keySet());
+        view.getProjectComboBox().addItems(getProjectsFromSpace(""));
+
+         /*
+        Listener for the space combo box
+         */
+        view.getSpaceComboBox().addValueChangeListener( valueChangeEvent -> {
+            String selectedSpace = (String) valueChangeEvent.getProperty().getValue();
+            updateProjectBox(selectedSpace);
+        });
+
+        /*
+        Listener for the project combo box
+         */
+        view.getProjectComboBox().addValueChangeListener( valueChangeEvent -> {
+            String selectedProject = (String) valueChangeEvent.getProperty().getValue();
+            Switch followerSwitch = view.getFollowSwitch();
+            if (selectedProject == null){
+                followerSwitch.setVisible(false);
+                followerSwitch.setValue(true);
+                followerSwitch.setEnabled(false);
+                return;
+            }
+            followerSwitch.setVisible(true);
+            followerSwitch.setEnabled(true);
+            if (followingProjects.contains(selectedProject)){
+                followerSwitch.setValue(true);
+            } else{
+                followerSwitch.setValue(false);
+            }
+            currentProject = selectedProject;
+        });
+
+        /*
+        Listener for the follower SWITCH
+         */
+        view.getFollowSwitch().addValueChangeListener( focusEvent -> {
+            String selectedProject = (String) view.getProjectComboBox().getValue();
+            if(selectedProject == null)
+                selectedProject = "";
+            if(view.getFollowSwitch().getValue() && selectedProject.equals(currentProject)){
+                try{
+                    model.followProject(sqlTableName, selectedProject, userID, primaryKey);
+                    switchIsChangedFlag();
+                    refreshProjects();
+                } catch (Exception exp){
+                    exp.printStackTrace();
+                }
+            } else if (!view.getFollowSwitch().getValue() && selectedProject.equals(currentProject)){
+                try {
+                    model.unfollowProject(sqlTableName, selectedProject, userID, primaryKey);
+                    switchIsChangedFlag();
+                    refreshProjects();
+                } catch (Exception exp){
+                    exp.printStackTrace();
+                }
+            }
+
+        });
 
     }
 
@@ -56,5 +119,51 @@ public class ProjectFollowerPresenter {
         this.primaryKey = primaryKey;
         return this;
     }
+
+
+    private void updateSpaceProjectMap(BeanItemContainer<ProjectBean> projectBeanBeanItemContainer) {
+        spaceProjectMap = new HashMap<>();
+
+        projectBeanBeanItemContainer.getItemIds().forEach( (ProjectBean project) -> {
+
+            String space = project.getSpace();
+            String code = project.getCode();
+            try{
+                spaceProjectMap.get(space).add(code);
+            } catch (NullPointerException exp){
+                spaceProjectMap.put(space, new ArrayList<>());
+                spaceProjectMap.get(space).add(code);
+            }
+        });
+    }
+
+    private List<String> getProjectsFromSpace(String space){
+        if (space == null || space.equalsIgnoreCase("")){
+            List<String> allProjects = new ArrayList<>();
+            spaceProjectMap.values().forEach( project -> allProjects.addAll(project));
+            return allProjects;
+        } else {
+            return this.spaceProjectMap.get(space);
+        }
+    }
+
+    private void updateProjectBox(String space){
+        view.getProjectComboBox().removeAllItems();
+        view.getProjectComboBox().addItems(getProjectsFromSpace(space));
+    }
+
+    private void refreshProjects() throws SQLException, WrongArgumentSettingsException{
+        this.followingProjects = model.loadFollowingProjects(sqlTableName, userID, primaryKey).getAllFollowingProjects();
+    }
+
+    private void switchIsChangedFlag(){
+        System.out.println("Following change event fired!");
+        this.isChangedFlag.setValue(!this.isChangedFlag.getValue());
+    }
+
+    public ObjectProperty<Boolean> getIsChangedFlag(){
+        return this.isChangedFlag;
+    }
+
 
 }

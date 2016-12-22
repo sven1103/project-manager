@@ -25,13 +25,13 @@ public class MyGrid extends Grid {
     public void saveEditor() throws FieldGroup.CommitException{
         super.saveEditor();
         refreshVisibleRows();
-        isChanged.setValue(false ? isChanged.getValue() : true);
+        isChanged.setValue(!isChanged.getValue());
     }
 
     /**
      * We need to refresh the rows manually after saving
      */
-    private void refreshVisibleRows() {
+    public void refreshVisibleRows() {
         Collection<Extension> extensions = getExtensions();
         extensions.stream().filter(extension -> extension instanceof RpcDataProviderExtension).forEach(extension -> {
             ((RpcDataProviderExtension) extension).refreshCache();

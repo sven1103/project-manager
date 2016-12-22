@@ -134,7 +134,7 @@ public class ProjectOVPresenter{
 
     void triggerViewPropertyChanged(Property.ValueChangeEvent event){
         this.contentModel.updateFigure();
-        this.overviewModuleChanged.setValue(overviewModuleChanged.getValue() ? false : true);
+        this.overviewModuleChanged.setValue(!overviewModuleChanged.getValue());
     }
 
     public ObjectProperty<Boolean> getIsChangedFlag(){
