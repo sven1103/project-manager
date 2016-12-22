@@ -27,6 +27,7 @@ public class OpenBisConnection {
             this.openBisClient = openBisClient;
             this.openBisClient.login();
         } catch (Exception exp){
+            exp.printStackTrace();
             return false;
         }
         return true;

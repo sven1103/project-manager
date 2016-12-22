@@ -2,17 +2,11 @@ package life.qbic.portal;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.vaadin.addon.charts.ChartOptions;
-import com.vaadin.addon.charts.themes.GrayTheme;
-import com.vaadin.addon.charts.themes.GridTheme;
-import com.vaadin.addon.charts.themes.HighChartsDefaultTheme;
-import com.vaadin.addon.charts.themes.SkiesTheme;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.shared.ui.colorpicker.Color;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -91,13 +85,12 @@ public class ManagerUI extends UI {
 
         final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
 
-        final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter);
 
         final ProjectFollowerView followerView = new ProjectFollowerViewImpl()
                 .setSpaceCaption("Institution")
                 .setProjectCaption("Project")
                 .build();
+
 
         final Properties properties = getPropertiesFromFile("/etc/openbis_production.properties");
 
@@ -105,7 +98,10 @@ public class ManagerUI extends UI {
                 properties.getProperty("openbispw"), properties.getProperty("openbisURI"));
 
         final OpenBisConnection openBisConnection = new OpenBisConnection();
-        openBisConnection.initConnection(openBisClient);
+
+        if(!openBisConnection.initConnection(openBisClient)){
+            projectOVPresenter.sendError("Database error.", "Could not connect to openBis!");
+        }
 
         final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
 
@@ -123,6 +119,10 @@ public class ManagerUI extends UI {
             System.err.println("Un enexpected Exception occured.");
             exp.printStackTrace();
         }
+
+        final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
+                projectOVPresenter, followerPresenter);
+
 
         final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())
                 .caption("Follow more projects")
