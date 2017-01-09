@@ -4,8 +4,11 @@ import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
@@ -13,6 +16,8 @@ import life.qbic.portal.database.ProjectDatabase;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
+import life.qbic.portal.projectSheetModule.ProjectSheetView;
+import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -50,6 +55,8 @@ public class ManagerUI extends UI {
 
         final VerticalLayout layout = new VerticalLayout();
 
+        final CssLayout projectDescriptionLayout = new CssLayout();
+
         final ProjectDatabase projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
 
         final ProjectContentModel model = new ProjectContentModel(projectDatabase);
@@ -60,11 +67,21 @@ public class ManagerUI extends UI {
 
         final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
 
+        final ProjectSheetView projectSheetView = new ProjectSheetViewImplementation("Project Sheet");
+
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
                 projectOVPresenter);
 
+        projectDescriptionLayout.addComponent(projectOverviewModule);
+        projectDescriptionLayout.addComponent(projectSheetView.getProjectSheet());
+        projectSheetView.getProjectSheet().setSizeUndefined();
+        projectDescriptionLayout.setSizeFull();
+        Responsive.makeResponsive(projectDescriptionLayout);
+
+
+
         layout.addComponent(pieChartStatusModule);
-        layout.addComponent(projectOverviewModule);
+        layout.addComponent(projectDescriptionLayout);
 
         layout.setMargin(true);
         layout.setSpacing(true);

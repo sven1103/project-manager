@@ -12990,3 +12990,8 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 14px;
 	color: #464646;
 }
+
+.mytheme .grid-max-size {
+	max-width: 600px;
+	width: 100%;
+}
