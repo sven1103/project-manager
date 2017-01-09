@@ -7,15 +7,12 @@ import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * Created by sven on 12/11/16.
  */
 public class ProjectDatabase implements ProjectDatabaseConnector {
-
-    private final String tableName = "projectsoverview";
-
-    private String primaryKey = "projectID";
 
     private String driverName = "com.mysql.jdbc.Driver";
 
@@ -27,20 +24,22 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
 
     private String password;
 
-    private ProjectDatabase(){}
-
     public ProjectDatabase(String user, String password){
         this.user = user;
         this.password = password;
     }
 
     @Override
-    public void connectToDatabase() throws IllegalArgumentException, SQLException {
-        pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
+    public boolean connectToDatabase() throws IllegalArgumentException, SQLException {
+        if (pool == null){
+            pool = new SimpleJDBCConnectionPool(driverName, connectionURI, user, password, 2, 5);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public SQLContainer loadCompleteTableData() throws RuntimeException, SQLException {
+    public SQLContainer loadCompleteTableData(String tableName, String primaryKey) throws RuntimeException, SQLException {
         TableQuery query = new TableQuery(tableName, pool);
         query.setVersionColumn(primaryKey);
         SQLContainer tableContent = new SQLContainer(query);
@@ -49,8 +48,8 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
     @Override
-    public FreeformQuery makeFreeFormQuery(QuerryType type) throws SQLException {
-        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, this.tableName), pool, primaryKey);
+    public FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey) throws SQLException, WrongArgumentSettingsException{
+        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, arguments), pool, primaryKey);
     }
 
 }

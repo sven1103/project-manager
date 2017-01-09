@@ -32,20 +32,19 @@ public class MasterPresenter {
             projectOverviewPresenter.init();
             log.info("Init projectoverview module successfully.");
         } catch (Exception exp){
-            log.fatal("Init of projectoverview module failed. Reeason: " + exp.getMessage());
+            log.fatal("Init of projectoverview module failed. Reason: " + exp.getMessage());
             projectOverviewPresenter.sendError("Project Overview Module failed.", exp.getMessage());
         }
 
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
         pieChartStatusModule.addPointClickListener(event -> {
-                projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
+                    projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
+                });
 
         projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
-
-        });
     }
 
-    public void refreshModuleViews(Property.ValueChangeEvent event){
+    private void refreshModuleViews(Property.ValueChangeEvent event){
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
     }
 

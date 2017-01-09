@@ -4,6 +4,7 @@ import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.database.QuerryType;
+import life.qbic.portal.database.WrongArgumentSettingsException;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,23 +31,27 @@ public class ProjectContentModelTest {
 
     HashMap<QuerryType, String> dummyKeyFigures = new HashMap<>();
 
+    HashMap<String, String> queryArguments = new HashMap<>();
+
     @Mock
     FreeformQuery testQuerry;
 
 
     @Before
-    public void setUp() throws SQLException{
+    public void setUp() throws SQLException, WrongArgumentSettingsException {
         MockitoAnnotations.initMocks(this);
         projectContentModel = new ProjectContentModel(projectDatabaseConnector);
+
+        queryArguments.put("table", "projectsoverview");
         when(testQuerry.getCount()).thenReturn(1);
-        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN)).thenReturn(testQuerry);
-        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS)).thenReturn(testQuerry);
-        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED)).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, queryArguments, "projectID")).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, queryArguments, "projectID")).thenReturn(testQuerry);
+        when(projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, queryArguments, "projectID")).thenReturn(testQuerry);
 
     }
 
     @Test (expected = SQLException.class)
-    public void connection_to_database_throws_SQLException() throws IllegalArgumentException, SQLException{
+    public void connection_to_database_throws_SQLException() throws IllegalArgumentException, SQLException, WrongArgumentSettingsException{
         doThrow(new SQLException()).when(projectDatabaseConnector).connectToDatabase();
         projectContentModel.init();
         verify(projectDatabaseConnector).connectToDatabase();
@@ -54,7 +59,7 @@ public class ProjectContentModelTest {
     }
 
     @Test (expected = IllegalArgumentException.class)
-    public void connection_to_database_throws_IllegalArgumentException() throws  IllegalArgumentException, SQLException{
+    public void connection_to_database_throws_IllegalArgumentException() throws  IllegalArgumentException, SQLException, WrongArgumentSettingsException{
         doThrow(new IllegalArgumentException()).when(projectDatabaseConnector).connectToDatabase();
         projectContentModel.init();
         verify(projectDatabaseConnector).connectToDatabase();
@@ -62,40 +67,41 @@ public class ProjectContentModelTest {
     }
 
     @Test
-    public void connection_to_database_was_successful() throws IllegalArgumentException, SQLException{
+    public void connection_to_database_was_successful() throws IllegalArgumentException, SQLException, NullPointerException, WrongArgumentSettingsException{
         projectContentModel.init();
     }
 
     @Test
-    public void load_data_from_SQL_database_was_successful() throws SQLException{
+    public void load_data_from_SQL_database_was_successful() throws SQLException, NullPointerException, WrongArgumentSettingsException{
         projectContentModel.init();
         verify(projectDatabaseConnector).connectToDatabase();
     }
 
     @Test (expected = SQLException.class)
-    public void load_data_from_SQL_database_and_receive_SQLException() throws SQLException{
-        doThrow(new SQLException()).when(projectDatabaseConnector).loadCompleteTableData();
+    public void load_data_from_SQL_database_and_receive_SQLException() throws SQLException, NullPointerException, WrongArgumentSettingsException{
+        doThrow(new SQLException()).when(projectDatabaseConnector).loadCompleteTableData("projectsoverview", "projectID");
         projectContentModel.init();
         fail("SQL connection should have been thrown here.");
-        verify(projectDatabaseConnector).loadCompleteTableData();
+        verify(projectDatabaseConnector).loadCompleteTableData("projectsoverview", "projectID");
     }
 
     @Test
-    public void load_data_and_receive_SQLcontainer_object() throws  SQLException{
+    public void load_data_and_receive_SQLcontainer_object() throws  SQLException, NullPointerException, WrongArgumentSettingsException{
         SQLContainer testContainer = mock(SQLContainer.class);
-        when(projectDatabaseConnector.loadCompleteTableData()).thenReturn(testContainer);
+        when(projectDatabaseConnector.loadCompleteTableData("projectsoverview", "projectID")).thenReturn(testContainer);
         projectContentModel.init();
         Assert.assertNotNull(projectContentModel.getTableContent());
-        verify(projectDatabaseConnector).loadCompleteTableData();
+        verify(projectDatabaseConnector).loadCompleteTableData("projectsoverview", "projectID");
     }
 
     @Test
-    public void perform_free_form_query_and_succeed() throws SQLException{
+    public void perform_free_form_query_and_succeed() throws SQLException, WrongArgumentSettingsException{
+
         projectContentModel.init();
         Assert.assertEquals("The count of the query ", Double.valueOf(1.0), projectContentModel.getKeyFigures().get("in progress"));
-        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED);
-        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS);
-        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN);
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, queryArguments, "projectID");
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, queryArguments, "projectID");
+        verify(projectDatabaseConnector).makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, queryArguments, "projectID");
     }
 
 
