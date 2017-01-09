@@ -79,8 +79,10 @@ public class ManagerUI extends UI {
         Responsive.makeResponsive(projectDescriptionLayout);
 
 
+        pieChartStatusModule.setHeight(300, Unit.PIXELS);
 
         layout.addComponent(pieChartStatusModule);
+
         layout.addComponent(projectDescriptionLayout);
 
         layout.setMargin(true);
