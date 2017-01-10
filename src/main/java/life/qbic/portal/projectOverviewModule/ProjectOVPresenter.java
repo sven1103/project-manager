@@ -1,6 +1,7 @@
 package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.filter.Like;
@@ -33,6 +34,8 @@ public class ProjectOVPresenter{
     private final ObjectProperty<Boolean> overviewModuleChanged = new ObjectProperty<>(true);
 
     private final ObjectProperty<String> selectedProject = new ObjectProperty<>("");
+
+    private Item selectedProjectItem = null;
 
     public ProjectOVPresenter(ProjectContentModel model,
                        ProjectOverviewModule overViewModule,
@@ -69,6 +72,7 @@ public class ProjectOVPresenter{
         overViewModule.getOverviewGrid().isChanged.addValueChangeListener(this::triggerViewPropertyChanged);
 
         overViewModule.getOverviewGrid().addItemClickListener(event -> {
+            this.selectedProjectItem = event.getItem();
             this.selectedProject.setValue((String) event.getItem().getItemProperty(TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID)).getValue());
             System.out.println("Selected project changed to: " + this.selectedProject.getValue());
         });
@@ -152,4 +156,7 @@ public class ProjectOVPresenter{
 
     public ObjectProperty<String> getSelectedProject() {return this.selectedProject;}
 
+    public Item getSelectedProjectItem() {
+        return this.selectedProjectItem;
+    }
 }

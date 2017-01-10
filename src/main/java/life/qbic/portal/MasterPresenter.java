@@ -44,7 +44,7 @@ public class MasterPresenter {
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
 
         projectOverviewPresenter.getSelectedProject().addValueChangeListener( event ->
-                projectSheetPresenter.showInfoForProject(projectOverviewPresenter.getSelectedProject().getValue()));
+                projectSheetPresenter.showInfoForProject(projectOverviewPresenter.getSelectedProjectItem()));
 
         pieChartStatusModule.addPointClickListener(event -> {
                     projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
