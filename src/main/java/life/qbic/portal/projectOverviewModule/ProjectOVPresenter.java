@@ -10,6 +10,8 @@ import com.vaadin.ui.Grid;
 import java.sql.SQLException;
 import java.util.Map;
 
+import life.qbic.portal.database.ColumnTypes;
+import life.qbic.portal.database.TableColumns;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import org.apache.commons.logging.Log;
 
@@ -29,6 +31,8 @@ public class ProjectOVPresenter{
     private final ProjectOverviewModule overViewModule;
 
     private final ObjectProperty<Boolean> overviewModuleChanged = new ObjectProperty<>(true);
+
+    private final ObjectProperty<String> selectedProject = new ObjectProperty<>("");
 
     public ProjectOVPresenter(ProjectContentModel model,
                        ProjectOverviewModule overViewModule,
@@ -63,6 +67,11 @@ public class ProjectOVPresenter{
         overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
 
         overViewModule.getOverviewGrid().isChanged.addValueChangeListener(this::triggerViewPropertyChanged);
+
+        overViewModule.getOverviewGrid().addItemClickListener(event -> {
+            this.selectedProject.setValue((String) event.getItem().getItemProperty(TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID)).getValue());
+            System.out.println("Selected project changed to: " + this.selectedProject.getValue());
+        });
 
         renderTable();
 
@@ -141,5 +150,6 @@ public class ProjectOVPresenter{
         return this.overviewModuleChanged;
     }
 
+    public ObjectProperty<String> getSelectedProject() {return this.selectedProject;}
 
 }

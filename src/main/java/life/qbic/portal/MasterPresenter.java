@@ -2,6 +2,7 @@ package life.qbic.portal;
 
 import com.vaadin.data.Property;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
+import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -16,13 +17,17 @@ public class MasterPresenter {
 
     private final ProjectOVPresenter projectOverviewPresenter;
 
+    private final ProjectSheetPresenter projectSheetPresenter;
+
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
     MasterPresenter(PieChartStatusModule pieChartStatusModule,
-                    ProjectOVPresenter projectOverviewPresenter){
+                    ProjectOVPresenter projectOverviewPresenter,
+                    ProjectSheetPresenter projectSheetPresenter){
         this.pieChartStatusModule = pieChartStatusModule;
         this.projectOverviewPresenter = projectOverviewPresenter;
+        this.projectSheetPresenter = projectSheetPresenter;
 
         init();
     }
@@ -37,6 +42,10 @@ public class MasterPresenter {
         }
 
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
+
+        projectOverviewPresenter.getSelectedProject().addValueChangeListener( event ->
+                projectSheetPresenter.showInfoForProject(projectOverviewPresenter.getSelectedProject().getValue()));
+
         pieChartStatusModule.addPointClickListener(event -> {
                     projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
                 });

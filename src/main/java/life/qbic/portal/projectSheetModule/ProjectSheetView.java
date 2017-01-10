@@ -9,4 +9,9 @@ public interface ProjectSheetView {
 
     Panel getProjectSheet();
 
+    void setDefaultContent();
+
+    void setProjectCode(String id);
+
+    void showProjectLayout();
 }

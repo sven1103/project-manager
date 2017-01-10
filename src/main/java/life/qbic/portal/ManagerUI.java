@@ -16,6 +16,7 @@ import life.qbic.portal.database.ProjectDatabase;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
+import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetView;
 import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
 import org.apache.commons.collections.map.HashedMap;
@@ -69,8 +70,10 @@ public class ManagerUI extends UI {
 
         final ProjectSheetView projectSheetView = new ProjectSheetViewImplementation("Project Sheet");
 
+        final ProjectSheetPresenter projectSheetPresenter = new ProjectSheetPresenter(projectSheetView);
+
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter);
+                projectOVPresenter, projectSheetPresenter);
 
         projectDescriptionLayout.addComponent(projectOverviewModule);
         projectDescriptionLayout.addComponent(projectSheetView.getProjectSheet());
