@@ -37,7 +37,7 @@ public class PieChartStatusModule extends Chart{
         seriesMap.forEach((key, value) -> dataSeries.add(value));
 
         conf.addSeries(dataSeries);
-        conf.setTitle("Pojects status");
+        conf.setTitle("Projects status");
         conf.setSubTitle("Overview");
 
         drawChart(conf);

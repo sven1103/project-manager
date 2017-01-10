@@ -12995,3 +12995,17 @@ div.v-layout.v-horizontal.v-widget {
 	max-width: 600px;
 	width: 100%;
 }
+
+.mytheme .my-grid {
+	margin: 0px 20px 20px 0px;
+}
+
+.mytheme .myformlayout-sheetcontent {
+	padding: 0px 20px 20px 20px;
+}
+
+.mytheme .overview-module-style {
+	width: 66%;
+	max-width: 866px;
+	margin: 0px 20px 20px 0px;
+}

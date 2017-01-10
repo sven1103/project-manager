@@ -5,6 +5,11 @@ package life.qbic.portal.database;
  */
 public enum ColumnTypes {
 
-    ID, PROJECTID, INVESTIGATORID, INSTRUMENTID, OFFERID
+    ID,
+    PROJECTID,
+    INVESTIGATORID,
+    INSTRUMENTID,
+    OFFERID,
+    REGISTRATIONDATE, PROJECTREGISTERED
 
 }

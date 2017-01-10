@@ -75,12 +75,15 @@ public class ManagerUI extends UI {
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
                 projectOVPresenter, projectSheetPresenter);
 
+
+        projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
+        projectOverviewModule.addStyleName("overview-module-style");
+        projectDescriptionLayout.setSizeFull();
         projectDescriptionLayout.addComponent(projectOverviewModule);
         projectDescriptionLayout.addComponent(projectSheetView.getProjectSheet());
-        projectSheetView.getProjectSheet().setSizeUndefined();
-        projectDescriptionLayout.setSizeFull();
-        Responsive.makeResponsive(projectDescriptionLayout);
 
+        projectSheetView.getProjectSheet().setSizeUndefined();
+        Responsive.makeResponsive(projectDescriptionLayout);
 
         pieChartStatusModule.setHeight(300, Unit.PIXELS);
 

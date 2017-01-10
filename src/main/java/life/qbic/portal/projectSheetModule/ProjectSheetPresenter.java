@@ -1,9 +1,10 @@
 package life.qbic.portal.projectSheetModule;
 
 import com.vaadin.data.Item;
-import com.vaadin.ui.Label;
 import life.qbic.portal.database.ColumnTypes;
 import life.qbic.portal.database.TableColumns;
+
+import java.util.Date;
 
 /**
  * Created by sven1103 on 10/01/17.
@@ -21,8 +22,18 @@ public class ProjectSheetPresenter {
         if (project == null){
             projectSheetView.setDefaultContent();
         } else{
-            projectSheetView.getProjectSheet().setContent(new Label(project.getItemProperty(TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID))));
+            fillInContentFromItem(project);
+            projectSheetView.showProjectLayout();
         }
 
+    }
+
+    private void fillInContentFromItem(Item item){
+        String projectCode = (String) item.getItemProperty(
+                TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID)).getValue();
+        Date projectRegistered = (Date) item.getItemProperty(
+                TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.REGISTRATIONDATE)).getValue();
+        projectSheetView.setProjectCode(projectCode);
+        projectSheetView.setRegistrationDate(projectRegistered);
     }
 }

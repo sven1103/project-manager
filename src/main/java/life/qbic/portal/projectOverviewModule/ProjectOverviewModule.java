@@ -46,7 +46,9 @@ public class ProjectOverviewModule extends VerticalLayout implements ProjectOver
 
         this.addComponents(overviewGrid);
         this.setSpacing(true);
-        overviewGrid.setSizeFull();
+
+        overviewGrid.setWidth(100, Unit.PERCENTAGE);
+        overviewGrid.setHeight(100, Unit.PERCENTAGE);
 
         overviewGrid.setEditorEnabled(true);
         //fieldGroup.addCommitHandler(presenter.commitChanges());
