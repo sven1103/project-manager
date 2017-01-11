@@ -20,6 +20,8 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
 
     private DateField registrationDateField;
 
+    private Button saveButton;
+
 
     public ProjectSheetViewImplementation(){
         this.projectSheet = new Panel();
@@ -36,6 +38,8 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
         projectCode = "";
         projectCodeLabel = new Label();
         registrationDateField = new PopupDateField();
+        registrationDateField.setDateFormat("yyyy-MM-dd");
+        saveButton = new Button("Save");
 
         projectCodeLabel.setCaption("Project Code");
         registrationDateField.setCaption("Registration Date");
@@ -65,6 +69,7 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
 
         projectLayout.addComponent(projectCodeLabel);
         projectLayout.addComponent(registrationDateField);
+        projectLayout.addComponent(saveButton);
         projectLayout.addStyleName("myformlayout-sheetcontent");
 
         this.projectSheet.setContent(projectLayout);
@@ -73,7 +78,16 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
     @Override
     public void setRegistrationDate(Date date) {
         this.registrationDate = date;
-        System.out.println(date);
         this.registrationDateField.setValue(date);
+    }
+
+    @Override
+    public Button getSaveButton() {
+        return this.saveButton;
+    }
+
+    @Override
+    public DateField getRegistrationDateField() {
+        return this.registrationDateField;
     }
 }

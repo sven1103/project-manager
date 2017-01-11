@@ -2,6 +2,7 @@ package life.qbic.portal.database;
 
 
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
+import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 
 import java.sql.SQLException;
@@ -17,6 +18,8 @@ public interface ProjectDatabaseConnector {
     SQLContainer loadCompleteTableData(String tableName, String primaryKey) throws SQLException;
 
     FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey) throws SQLException, WrongArgumentSettingsException;
+
+    JDBCConnectionPool getConnectionPool();
 
 
 }

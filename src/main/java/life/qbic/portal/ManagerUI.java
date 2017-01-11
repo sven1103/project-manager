@@ -13,6 +13,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import life.qbic.portal.database.ProjectDatabase;
+import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
@@ -58,7 +59,7 @@ public class ManagerUI extends UI {
 
         final CssLayout projectDescriptionLayout = new CssLayout();
 
-        final ProjectDatabase projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
 
         final ProjectContentModel model = new ProjectContentModel(projectDatabase);
 
@@ -70,7 +71,7 @@ public class ManagerUI extends UI {
 
         final ProjectSheetView projectSheetView = new ProjectSheetViewImplementation("Project Sheet");
 
-        final ProjectSheetPresenter projectSheetPresenter = new ProjectSheetPresenter(projectSheetView);
+        final ProjectSheetPresenter projectSheetPresenter = new ProjectSheetPresenter(projectSheetView, projectDatabase, log);
 
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
                 projectOVPresenter, projectSheetPresenter);

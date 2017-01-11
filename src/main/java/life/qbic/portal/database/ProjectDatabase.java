@@ -52,4 +52,9 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
         return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, arguments), pool, primaryKey);
     }
 
+    @Override
+    public JDBCConnectionPool getConnectionPool() {
+        return this.pool;
+    }
+
 }

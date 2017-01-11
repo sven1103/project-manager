@@ -1,5 +1,7 @@
 package life.qbic.portal.projectSheetModule;
 
+import com.vaadin.ui.Button;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Panel;
 
 import java.util.Date;
@@ -18,4 +20,8 @@ public interface ProjectSheetView {
     void showProjectLayout();
 
     void setRegistrationDate(Date date);
+
+    Button getSaveButton();
+
+    DateField getRegistrationDateField();
 }
