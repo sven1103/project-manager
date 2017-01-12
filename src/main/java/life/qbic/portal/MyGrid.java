@@ -31,7 +31,7 @@ public class MyGrid extends Grid {
     /**
      * We need to refresh the rows manually after saving
      */
-    private void refreshVisibleRows() {
+    public void refreshVisibleRows() {
         Collection<Extension> extensions = getExtensions();
         extensions.stream().filter(extension -> extension instanceof RpcDataProviderExtension).forEach(extension -> {
             ((RpcDataProviderExtension) extension).refreshCache();

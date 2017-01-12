@@ -1,6 +1,7 @@
 package life.qbic.portal.projectSheetModule;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.util.ObjectProperty;
 import life.qbic.portal.database.ColumnTypes;
 import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.database.TableColumns;
@@ -17,11 +18,11 @@ import java.util.Date;
  */
 public class ProjectSheetPresenter {
 
-    final private ProjectSheetView projectSheetView;
+    private final ProjectSheetView projectSheetView;
 
-    final private ProjectDatabaseConnector dbConnector;
+    private final ProjectDatabaseConnector dbConnector;
 
-    final private String sqlCommitCommand = String.format("UPDATE projectsoverview SET %s = ? " +
+    private final String sqlCommitCommand = String.format("UPDATE projectsoverview SET %s = ? " +
             "WHERE %s = ?",
             TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.REGISTRATIONDATE),
             TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.ID));
@@ -30,10 +31,13 @@ public class ProjectSheetPresenter {
 
     private final Log log;
 
+    private final ObjectProperty<Boolean> informationCommittedFlag;
+
     public ProjectSheetPresenter(ProjectSheetView projectSheetView, ProjectDatabaseConnector dbConnector, Log log){
         this.projectSheetView = projectSheetView;
         this.dbConnector = dbConnector;
         this.log = log;
+        this.informationCommittedFlag = new ObjectProperty<>(false);
         init();
     }
 
@@ -92,6 +96,12 @@ public class ProjectSheetPresenter {
         ps.close();
         con.close();
         log.info(String.format("Changes for project %s successfully updated.", project));
+        informationCommittedFlag.setValue(!informationCommittedFlag.getValue());
+
+    }
+
+    public ObjectProperty<Boolean> getInformationCommittedFlag(){
+        return this.informationCommittedFlag;
     }
 
 

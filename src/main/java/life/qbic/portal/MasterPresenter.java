@@ -51,9 +51,13 @@ public class MasterPresenter {
                 });
 
         projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
+
+        projectSheetPresenter.getInformationCommittedFlag().addValueChangeListener(this::refreshModuleViews);
+
     }
 
     private void refreshModuleViews(Property.ValueChangeEvent event){
+        projectOverviewPresenter.refreshView();
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
     }
 

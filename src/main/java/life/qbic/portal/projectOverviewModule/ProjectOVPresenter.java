@@ -147,7 +147,7 @@ public class ProjectOVPresenter{
 
     void triggerViewPropertyChanged(Property.ValueChangeEvent event){
         this.contentModel.updateFigure();
-        this.overviewModuleChanged.setValue(overviewModuleChanged.getValue() ? false : true);
+        this.overviewModuleChanged.setValue(!overviewModuleChanged.getValue());
     }
 
     public ObjectProperty<Boolean> getIsChangedFlag(){
@@ -158,5 +158,16 @@ public class ProjectOVPresenter{
 
     public Item getSelectedProjectItem() {
         return this.selectedProjectItem;
+    }
+
+    public void refreshView() {
+        try{
+            this.contentModel.refresh();
+            this.overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
+            this.overViewModule.getOverviewGrid().refreshVisibleRows();
+        } catch (Exception exc){
+            log.error("Could not refresh the project overview model.", exc);
+        }
+
     }
 }
