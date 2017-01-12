@@ -31,6 +31,7 @@ public class PieChartStatusModule extends Chart{
 
         plotOptions.setAllowPointSelect(true);
         plotOptions.setCursor(Cursor.POINTER);
+        plotOptions.setAnimation(true);
 
         conf.setPlotOptions(plotOptions);
 
@@ -48,11 +49,15 @@ public class PieChartStatusModule extends Chart{
         refresh();
     }
 
-    public void refresh(){
+    private void refresh(){
+        if (this.plotOptions != null && plotOptions.getAnimation()){
+            plotOptions.setAnimation(false);
+        }
         dataSeries.clear();
         seriesMap.forEach((String key, DataSeriesItem item) -> {
             dataSeries.add(item, true, false);
         });
+
         drawChart(conf);
     }
 
