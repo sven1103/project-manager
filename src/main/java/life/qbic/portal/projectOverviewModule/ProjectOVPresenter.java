@@ -163,8 +163,9 @@ public class ProjectOVPresenter{
     public void refreshView() {
         try{
             this.contentModel.refresh();
-            this.overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
             this.overViewModule.getOverviewGrid().refreshVisibleRows();
+            this.overViewModule.getOverviewGrid().clearSortOrder();
+            renderTable();
         } catch (Exception exc){
             log.error("Could not refresh the project overview model.", exc);
         }
