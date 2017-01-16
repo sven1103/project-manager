@@ -132,9 +132,19 @@ public class ProjectOVPresenter{
         overViewModule.sendInfo(caption, message);
     }
 
-    void triggerViewPropertyChanged(Property.ValueChangeEvent event){
+    private void triggerViewPropertyChanged(Property.ValueChangeEvent event){
         this.contentModel.updateFigure();
         this.overviewModuleChanged.setValue(!overviewModuleChanged.getValue());
+    }
+
+    public void refresh(){
+        try{
+            this.contentModel.init();
+        } catch (Exception exp){
+
+        }
+
+        this.overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
     }
 
     public ObjectProperty<Boolean> getIsChangedFlag(){

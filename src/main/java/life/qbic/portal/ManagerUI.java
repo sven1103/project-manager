@@ -7,11 +7,13 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import life.qbic.openbis.openbisclient.OpenBisClient;
 import life.qbic.portal.database.ProjectDatabase;
+import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerModel;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
@@ -70,26 +72,16 @@ public class ManagerUI extends UI {
 
         final VerticalLayout mainContent = new VerticalLayout();
 
-        final ProjectDatabase projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
+        final ProjectFilter projectFilter = new ProjectFilter();
+
+        final ProjectDatabase projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
+                credentials.get("sqlpassword"),
+                projectFilter);
         try{
             projectDatabase.connectToDatabase();
         } catch (SQLException exp){
             System.err.println("Could not connect to SQL project database. Reason: " + exp.getMessage());
         }
-
-        final ProjectContentModel model = new ProjectContentModel(projectDatabase);
-
-        final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
-
-        final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule();
-
-        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
-
-
-        final ProjectFollowerView followerView = new ProjectFollowerViewImpl()
-                .setSpaceCaption("Institution")
-                .setProjectCaption("Project")
-                .build();
 
 
         final Properties properties = getPropertiesFromFile("/etc/openbis_production.properties");
@@ -97,13 +89,19 @@ public class ManagerUI extends UI {
         final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("openbisuser"),
                 properties.getProperty("openbispw"), properties.getProperty("openbisURI"));
 
+
+        final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
+
+        final ProjectFollowerView followerView = new ProjectFollowerViewImpl()
+                .setSpaceCaption("Institution")
+                .setProjectCaption("Project")
+                .build();
+
         final OpenBisConnection openBisConnection = new OpenBisConnection();
 
         if(!openBisConnection.initConnection(openBisClient)){
-            projectOVPresenter.sendError("Database error.", "Could not connect to openBis!");
+            Notification.show("Could not connect to openBis!");
         }
-
-        final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
 
         final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
         followerPresenter.setUserID("zxmqp08").setSQLTableName("followingprojects").setPrimaryKey("id");
@@ -120,8 +118,17 @@ public class ManagerUI extends UI {
             exp.printStackTrace();
         }
 
+        final ProjectContentModel model = new ProjectContentModel(projectDatabase, followerModel.getAllFollowingProjects());
+
+        final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
+
+        final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule();
+
+        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
+
+
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter, followerPresenter);
+                projectOVPresenter, followerPresenter, projectFilter);
 
 
         final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())

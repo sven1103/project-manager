@@ -1,14 +1,14 @@
 package life.qbic.portal.database;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.util.filter.Compare;
+import com.vaadin.data.util.filter.Or;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.connection.SimpleJDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import com.vaadin.data.util.sqlcontainer.query.TableQuery;
-
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,9 +27,18 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
 
     private String password;
 
+    private ProjectFilter filter;
+
+    public ProjectDatabase(String user, String password, ProjectFilter filter){
+        this.user = user;
+        this.password = password;
+        this.filter = filter;
+    }
+
     public ProjectDatabase(String user, String password){
         this.user = user;
         this.password = password;
+        this.filter = new ProjectFilter();
     }
 
     @Override
@@ -54,7 +63,15 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     @Override
     public FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey) throws SQLException, WrongArgumentSettingsException{
         //System.out.println(SatusQuerryGenerator.getQuerryFromType(type, arguments));
-        return new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, arguments), pool, primaryKey);
+        FreeformQuery query = new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, arguments, null), pool, primaryKey);
+        return query;
+    }
+
+    @Override
+    public FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey, List<String> followingProjects) throws SQLException, WrongArgumentSettingsException {
+        FreeformQuery query = new FreeformQuery(SatusQuerryGenerator.getQuerryFromType(type, arguments, followingProjects), pool, primaryKey);
+        System.out.println(query.getQueryString());
+        return query;
     }
 
     @Override
@@ -63,20 +80,38 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
     @Override
-    public SQLContainer loadSelectedTableData(String tableName, String primaryKey, String includeValuesFromColumnName, List<String> inclusionValues)
-    throws SQLException, RuntimeException{
+    public void setProjectFilter(ProjectFilter filter) {
+        this.filter = filter;
+    }
 
-        Container.Filter qbicIdFilter = new SqlQbicIdFilter(includeValuesFromColumnName, inclusionValues);
-        List<Container.Filter> filterList = new ArrayList<>();
-        filterList.add(qbicIdFilter);
+    @Override
+    public ProjectFilter getProjectFilter(){
+        return this.filter;
+    }
+
+    @Override
+    public SQLContainer loadSelectedTableData(String tableName, String primaryKey)
+    throws SQLException, RuntimeException{
 
         TableQuery query = new TableQuery(tableName, pool);
         query.setVersionColumn(primaryKey);
-        query.setFilters(filterList);
 
         SQLContainer tableContent = new SQLContainer(query);
+        tableContent.addContainerFilter(new Or(filter.getFilterList()));
         tableContent.setAutoCommit(true);
         return tableContent;
     }
+
+
+    private Container.Filter[] makeFilterList(String propertyID, List<String> inclusionValues){
+        Container.Filter[] filterArray = new Container.Filter[inclusionValues.size()];
+        int i=0;
+        for (String toFilter: inclusionValues) {
+            filterArray[i++] = new Compare.Equal(propertyID, toFilter);
+        }
+        return filterArray;
+    }
+
+
 
 }

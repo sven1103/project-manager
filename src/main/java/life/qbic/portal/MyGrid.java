@@ -1,6 +1,5 @@
 package life.qbic.portal;
 
-import com.vaadin.data.Property;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.server.Extension;

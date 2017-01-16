@@ -1,6 +1,8 @@
 package life.qbic.portal.database;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,12 +23,12 @@ public class SatusQuerryGenerator {
         followingProjectMap.put(QuerryType.UNFOLLOW_PROJECT, "DELETE FROM %s WHERE user_id=\'%s\' AND project_id=\'%s\' ;");
     }
 
-    public static String getQuerryFromType(QuerryType type, HashMap arguments) throws WrongArgumentSettingsException{
+    public static String getQuerryFromType(QuerryType type, HashMap arguments, List<String> followingProjects) throws WrongArgumentSettingsException{
         if (arguments == null || arguments.isEmpty()){
             throw new WrongArgumentSettingsException("The argument map is empty ord not given");
         }
         if (querryMap.containsKey(type) && arguments.containsKey("table")) {
-            return String.format(querryMap.get(type), arguments.get("table"));
+            return (String.format(querryMap.get(type), arguments.get("table")) + getTheOrWhereFilterQuery(followingProjects));
         }
         return getFollowingProjects(type, arguments);
     }
@@ -43,6 +45,17 @@ public class SatusQuerryGenerator {
             return String.format(followingProjectMap.get(type), arguments.get("table"), arguments.get("user_id"));
         }
         throw new WrongArgumentSettingsException("Table or user_id argument is missing");
+    }
+
+    private static String getTheOrWhereFilterQuery(List<String> followingProjects){
+        StringBuilder query = new StringBuilder();
+        query.append(" AND (");
+        for (String filter : followingProjects.subList(0, followingProjects.size()-1)){
+            query.append(String.format(" projectID = \'%s\'", filter));
+            query.append(" OR");
+        }
+        query.append(String.format(" projectID = \'%s\');", followingProjects.get(followingProjects.size()-1)));
+        return query.toString();
     }
 
 }

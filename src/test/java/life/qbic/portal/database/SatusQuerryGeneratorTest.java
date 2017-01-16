@@ -24,20 +24,20 @@ public class SatusQuerryGeneratorTest {
         testArguments.put("table", "testTable");
         testArguments.put("user_id", "testUser");
 
-        Assert.assertEquals("SELECT * FROM testTable WHERE projectStatus=\'open\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.PROJECTSTATUS_OPEN, testArguments));
-        Assert.assertEquals("SELECT * FROM testTable WHERE projectStatus=\'closed\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.PROJECTSTATUS_CLOSED, testArguments));
-        Assert.assertEquals("SELECT * FROM testTable WHERE projectStatus=\'in progress\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.PROJECTSTATUS_INPROGRESS, testArguments));
-        Assert.assertEquals("SELECT * FROM testTable WHERE user_id=\'testUser\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, testArguments));
+        Assert.assertEquals("SELECT * FROM testTable WHERE projectStatus=\'open\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.PROJECTSTATUS_OPEN, testArguments, null));
+        Assert.assertEquals("SELECT * FROM testTable WHERE projectStatus=\'closed\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.PROJECTSTATUS_CLOSED, testArguments, null));
+        Assert.assertEquals("SELECT * FROM testTable WHERE projectStatus=\'in progress\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.PROJECTSTATUS_INPROGRESS, testArguments, null));
+        Assert.assertEquals("SELECT * FROM testTable WHERE user_id=\'testUser\'", SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, testArguments, null));
     }
 
     @Test (expected = WrongArgumentSettingsException.class)
     public void make_errorness_querry_and_get_NullPointerException() throws WrongArgumentSettingsException{
-        SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, null);
+        SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, null, null);
     }
 
     @Test (expected = WrongArgumentSettingsException.class)
     public void give_empty_arguments_to_query_and_get_WrongArgumentSettingsException() throws WrongArgumentSettingsException{
-        SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, new HashMap());
+        SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, new HashMap(), null);
     }
 
     @Test (expected = WrongArgumentSettingsException.class)
@@ -46,7 +46,7 @@ public class SatusQuerryGeneratorTest {
         testArguments.put("project", "testTable");
         testArguments.put("user_id", "testUser");
 
-        SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, testArguments);
+        SatusQuerryGenerator.getQuerryFromType(QuerryType.GET_FOLLOWING_PROJECTS, testArguments, null);
 
     }
 }

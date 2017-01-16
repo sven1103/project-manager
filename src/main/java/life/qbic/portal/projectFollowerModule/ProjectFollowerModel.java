@@ -10,10 +10,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by sven on 12/17/16.
@@ -22,7 +19,7 @@ public class ProjectFollowerModel {
 
     private final ProjectDatabase projectDatabase;
 
-    private final Set<String> allFollingProjects = new HashSet<>();
+    private final List<String> allFollingProjects = new ArrayList<>();
     private final HashMap<String, String> querySettings = new HashMap<>();
 
     private final Map<String, String> spaceProjectMap= new HashMap<>();
@@ -33,14 +30,16 @@ public class ProjectFollowerModel {
     }
 
 
-    Set<String> getAllFollowingProjects(){
+    public List<String> getAllFollowingProjects(){
         return allFollingProjects;
     }
 
 
-    ProjectFollowerModel loadFollowingProjects(String sqlTable, String userID, String primaryKey)
+    public ProjectFollowerModel loadFollowingProjects(String sqlTable, String userID, String primaryKey)
             throws SQLException, WrongArgumentSettingsException{
         projectDatabase.connectToDatabase();
+
+        allFollingProjects.clear();
 
         querySettings.put("table", sqlTable);
         querySettings.put("user_id", userID);

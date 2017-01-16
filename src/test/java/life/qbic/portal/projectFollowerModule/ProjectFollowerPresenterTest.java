@@ -11,7 +11,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by sven on 12/18/16.
@@ -50,7 +52,7 @@ public class ProjectFollowerPresenterTest {
     @Test
     public void start_orchestration_and_get_empty_project_bean_container() throws SQLException, WrongArgumentSettingsException{
 
-        HashSet<String> testProjectSet = new HashSet<>();
+        List<String> testProjectSet = new ArrayList<>();
         testProjectSet.add("QHIPP");
 
         Mockito.when(openBisConnection.getListOfProjects()).thenReturn(new BeanItemContainer<>(ProjectBean.class));

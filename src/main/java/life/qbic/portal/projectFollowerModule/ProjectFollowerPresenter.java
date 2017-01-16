@@ -22,7 +22,7 @@ public class ProjectFollowerPresenter {
     private String userID;
     private String primaryKey;
     private Map<String, List<String>> spaceProjectMap;
-    private Set<String> followingProjects;
+    private List<String> followingProjects;
     private String currentProject;
     private ObjectProperty<Boolean> isChangedFlag;
 
@@ -86,16 +86,16 @@ public class ProjectFollowerPresenter {
             if(view.getFollowSwitch().getValue() && selectedProject.equals(currentProject)){
                 try{
                     model.followProject(sqlTableName, selectedProject, userID, primaryKey);
-                    switchIsChangedFlag();
                     refreshProjects();
+                    switchIsChangedFlag();
                 } catch (Exception exp){
                     exp.printStackTrace();
                 }
             } else if (!view.getFollowSwitch().getValue() && selectedProject.equals(currentProject)){
                 try {
                     model.unfollowProject(sqlTableName, selectedProject, userID, primaryKey);
-                    switchIsChangedFlag();
                     refreshProjects();
+                    switchIsChangedFlag();
                 } catch (Exception exp){
                     exp.printStackTrace();
                 }
@@ -164,6 +164,8 @@ public class ProjectFollowerPresenter {
     public ObjectProperty<Boolean> getIsChangedFlag(){
         return this.isChangedFlag;
     }
+
+    public List<String> getFollowingProjects(){return this.followingProjects;}
 
 
 }
