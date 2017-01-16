@@ -50,7 +50,7 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
         saveButton = new Button("Save");
 
         projectCodeLabel.setCaption("Project code");
-        registrationDateField.setCaption("Registration cate");
+        registrationDateField.setCaption("Registration date");
         barcodeSendDateField.setCaption("Barcodes sent on");
     }
 
