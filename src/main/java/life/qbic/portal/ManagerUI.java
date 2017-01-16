@@ -132,10 +132,10 @@ public class ManagerUI extends UI {
 
 
         final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())
-                .caption("Follow more projects")
+                .caption("FOLLOW PROJECTS")
                 .mode(SliderMode.TOP)
                 .tabPosition(SliderTabPosition.MIDDLE)
-                .style(SliderPanelStyles.COLOR_GRAY)
+                .style(SliderPanelStyles.COLOR_WHITE)
                 .animationDuration(100).build();
 
         //ChartOptions.get().setTheme(new GridTheme());

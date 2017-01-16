@@ -116,7 +116,7 @@ public class ProjectOVPresenter{
     public void setFilter(String column, String filter){
         Container.Filter tmpFilter = new Like(column, filter);
         if(!contentModel.getTableContent().getContainerFilters().contains(tmpFilter)){
-            contentModel.getTableContent().removeAllContainerFilters();
+            contentModel.getTableContent().removeContainerFilters("projectStatus");
             contentModel.getTableContent().addContainerFilter(new Like(column, filter));
         } else{
             contentModel.getTableContent().removeContainerFilter(tmpFilter);
