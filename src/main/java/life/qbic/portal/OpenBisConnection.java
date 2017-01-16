@@ -1,13 +1,10 @@
 package life.qbic.portal;
 
-import ch.systemsx.cisd.openbis.generic.shared.api.v1.dto.Project;
-import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import life.qbic.openbis.openbisclient.OpenBisClient;
 import life.qbic.portal.beans.ProjectBean;
 import life.qbic.portal.beans.ProjectToProjectBeanConverter;
 
-import java.util.List;
 
 /**
  * Created by sven1103 on 8/12/16.
@@ -47,6 +44,13 @@ public class OpenBisConnection {
 
 
         return projectBeanBeanItemContainer;
+    }
+
+    public String getProjectDescription(String projectCode){
+        if (this.openBisClient == null || projectCode == null || projectCode.isEmpty()){
+            return "No description available.";
+        }
+        return this.openBisClient.getProjectByCode(projectCode).getDescription();
     }
 
 }

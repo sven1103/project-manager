@@ -1,6 +1,7 @@
 package life.qbic.portal.projectFollowerModule;
 
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import life.qbic.portal.MyGrid;
 import org.vaadin.teemu.switchui.Switch;
@@ -19,6 +20,8 @@ public interface ProjectFollowerView {
     ProjectFollowerView setSpaceCaption(String caption);
 
     ProjectFollowerView setProjectCaption(String caption);
+
+    Label getDescriptionField();
 
     ProjectFollowerView build();
 

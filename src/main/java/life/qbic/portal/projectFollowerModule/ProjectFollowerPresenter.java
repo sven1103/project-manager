@@ -59,14 +59,16 @@ public class ProjectFollowerPresenter {
          */
         view.getProjectComboBox().addValueChangeListener( valueChangeEvent -> {
             String selectedProject = (String) valueChangeEvent.getProperty().getValue();
+
+            this.view.getDescriptionField().setValue(
+                    shortenDescription(connection.getProjectDescription(selectedProject)));
+
             Switch followerSwitch = view.getFollowSwitch();
             if (selectedProject == null){
-                followerSwitch.setVisible(false);
-                followerSwitch.setValue(true);
+                followerSwitch.setValue(false);
                 followerSwitch.setEnabled(false);
                 return;
             }
-            followerSwitch.setVisible(true);
             followerSwitch.setEnabled(true);
             if (followingProjects.contains(selectedProject)){
                 followerSwitch.setValue(true);
@@ -103,6 +105,12 @@ public class ProjectFollowerPresenter {
 
         });
 
+    }
+
+    private String shortenDescription(String projectDescription) {
+        if (projectDescription.length() > 100){
+            return projectDescription.substring(0, 100) + " ...";
+        } else return projectDescription;
     }
 
     public ProjectFollowerPresenter setSQLTableName(String tableName){

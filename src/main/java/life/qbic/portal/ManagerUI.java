@@ -135,7 +135,7 @@ public class ManagerUI extends UI {
                 .caption("FOLLOW PROJECTS")
                 .mode(SliderMode.TOP)
                 .tabPosition(SliderTabPosition.MIDDLE)
-                .style(SliderPanelStyles.COLOR_WHITE)
+                .style("slider-format")
                 .animationDuration(100).build();
 
         //ChartOptions.get().setTheme(new GridTheme());
