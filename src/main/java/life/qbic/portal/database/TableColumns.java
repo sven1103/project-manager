@@ -17,6 +17,7 @@ public class TableColumns {
         PROJECTOVERVIEWTABLE.put(ColumnTypes.PROJECTID, "projectID");
         PROJECTOVERVIEWTABLE.put(ColumnTypes.PROJECTREGISTERED, "projectRegistered");
         PROJECTOVERVIEWTABLE.put(ColumnTypes.REGISTRATIONDATE, "projectRegisteredDate");
+        PROJECTOVERVIEWTABLE.put(ColumnTypes.BARCODESSENTDATE, "barcodesSentDate");
     }
 
 

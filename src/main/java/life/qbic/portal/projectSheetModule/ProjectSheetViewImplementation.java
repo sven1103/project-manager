@@ -1,6 +1,7 @@
 package life.qbic.portal.projectSheetModule;
 
 
+import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.*;
 
 import java.util.Date;
@@ -22,6 +23,8 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
 
     private Button saveButton;
 
+    private DateField barcodeSendDateField;
+
 
     public ProjectSheetViewImplementation(){
         this.projectSheet = new Panel();
@@ -37,12 +40,18 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
         setDefaultContent();
         projectCode = "";
         projectCodeLabel = new Label();
+        projectCodeLabel.setIcon(FontAwesome.INFO_CIRCLE);
+
         registrationDateField = new PopupDateField();
+        barcodeSendDateField = new PopupDateField();
+        barcodeSendDateField.setDateFormat("yyyy-MM-dd");
         registrationDateField.setDateFormat("yyyy-MM-dd");
+
         saveButton = new Button("Save");
 
-        projectCodeLabel.setCaption("Project Code");
-        registrationDateField.setCaption("Registration Date");
+        projectCodeLabel.setCaption("Project code");
+        registrationDateField.setCaption("Registration cate");
+        barcodeSendDateField.setCaption("Barcodes sent on");
     }
 
     @Override
@@ -69,6 +78,7 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
 
         projectLayout.addComponent(projectCodeLabel);
         projectLayout.addComponent(registrationDateField);
+        projectLayout.addComponent(barcodeSendDateField);
         projectLayout.addComponent(saveButton);
         projectLayout.addStyleName("myformlayout-sheetcontent");
 
@@ -82,6 +92,13 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
     }
 
     @Override
+    public void setBarcodeSentDate(Date date) {
+        if (date != null){
+            this.barcodeSendDateField.setValue(date);
+        }
+    }
+
+    @Override
     public Button getSaveButton() {
         return this.saveButton;
     }
@@ -89,5 +106,10 @@ public class ProjectSheetViewImplementation implements ProjectSheetView{
     @Override
     public DateField getRegistrationDateField() {
         return this.registrationDateField;
+    }
+
+    @Override
+    public DateField getBarcodeSentDateField() {
+        return this.barcodeSendDateField;
     }
 }

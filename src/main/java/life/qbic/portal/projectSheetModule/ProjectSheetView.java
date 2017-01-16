@@ -21,7 +21,12 @@ public interface ProjectSheetView {
 
     void setRegistrationDate(Date date);
 
+    void setBarcodeSentDate(Date date);
+
     Button getSaveButton();
 
     DateField getRegistrationDateField();
+
+    DateField getBarcodeSentDateField();
+
 }

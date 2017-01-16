@@ -64,12 +64,24 @@ public class ProjectSheetPresenter {
     }
 
     private void fillInContentFromItem(){
-        String projectCode = (String) currentItem.getItemProperty(
-                TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID)).getValue();
-        Date projectRegistered = (Date) currentItem.getItemProperty(
-                TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.REGISTRATIONDATE)).getValue();
-        projectSheetView.setProjectCode(projectCode);
-        projectSheetView.setRegistrationDate(projectRegistered);
+        String projectCode = null;
+        Date projectRegistered = null;
+        Date barcodeSent = null;
+
+        try {
+            projectCode = (String) currentItem.getItemProperty(
+                    TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID)).getValue();
+            projectRegistered = (Date) currentItem.getItemProperty(
+                    TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.REGISTRATIONDATE)).getValue();
+            barcodeSent = (Date) currentItem.getItemProperty(
+                    TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.BARCODESSENTDATE)).getValue();
+        } catch (NullPointerException exp){
+            // Do nothing
+        } finally {
+            projectSheetView.setProjectCode(projectCode);
+            projectSheetView.setRegistrationDate(projectRegistered);
+            projectSheetView.setBarcodeSentDate(barcodeSent);
+        }
     }
 
     private void commitChangesToDataBase() throws SQLException{
