@@ -92,6 +92,11 @@ public class ProjectContentModel{
         }
     }
 
+    public void refresh() throws SQLException, WrongArgumentSettingsException{
+        this.tableContent = projectDatabaseConnector.loadCompleteTableData(queryArguments.get("table"), primaryKey);
+        querryKeyFigures();
+    }
+
 
     public Map<String, Double> getKeyFigures(){
         return this.keyFigures;

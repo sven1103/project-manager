@@ -1,6 +1,7 @@
 package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.data.Container;
+import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.filter.Like;
@@ -10,6 +11,8 @@ import com.vaadin.ui.Grid;
 import java.sql.SQLException;
 import java.util.Map;
 
+import life.qbic.portal.database.ColumnTypes;
+import life.qbic.portal.database.TableColumns;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import org.apache.commons.logging.Log;
 
@@ -29,6 +32,10 @@ public class ProjectOVPresenter{
     private final ProjectOverviewModule overViewModule;
 
     private final ObjectProperty<Boolean> overviewModuleChanged = new ObjectProperty<>(true);
+
+    private final ObjectProperty<String> selectedProject = new ObjectProperty<>("");
+
+    private Item selectedProjectItem = null;
 
     public ProjectOVPresenter(ProjectContentModel model,
                        ProjectOverviewModule overViewModule,
@@ -63,6 +70,12 @@ public class ProjectOVPresenter{
         overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
 
         overViewModule.getOverviewGrid().isChanged.addValueChangeListener(this::triggerViewPropertyChanged);
+
+        overViewModule.getOverviewGrid().addItemClickListener(event -> {
+            this.selectedProjectItem = event.getItem();
+            this.selectedProject.setValue((String) event.getItem().getItemProperty(TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID)).getValue());
+            System.out.println("Selected project changed to: " + this.selectedProject.getValue());
+        });
 
         renderTable();
 
@@ -135,6 +148,7 @@ public class ProjectOVPresenter{
     private void triggerViewPropertyChanged(Property.ValueChangeEvent event){
         this.contentModel.updateFigure();
         this.overviewModuleChanged.setValue(!overviewModuleChanged.getValue());
+
     }
 
     public void refresh(){
@@ -143,7 +157,6 @@ public class ProjectOVPresenter{
         } catch (Exception exp){
 
         }
-
         this.overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
     }
 
@@ -151,5 +164,21 @@ public class ProjectOVPresenter{
         return this.overviewModuleChanged;
     }
 
+    public ObjectProperty<String> getSelectedProject() {return this.selectedProject;}
 
+    public Item getSelectedProjectItem() {
+        return this.selectedProjectItem;
+    }
+
+    public void refreshView() {
+        try{
+            this.contentModel.refresh();
+            this.overViewModule.getOverviewGrid().refreshVisibleRows();
+            this.overViewModule.getOverviewGrid().clearSortOrder();
+            renderTable();
+        } catch (Exception exc){
+            log.error("Could not refresh the project overview model.", exc);
+        }
+
+    }
 }

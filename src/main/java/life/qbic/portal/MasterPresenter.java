@@ -4,6 +4,7 @@ import com.vaadin.data.Property;
 import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
+import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -18,20 +19,25 @@ public class MasterPresenter {
 
     private final ProjectOVPresenter projectOverviewPresenter;
 
+    private final ProjectSheetPresenter projectSheetPresenter;
+
     private final ProjectFollowerPresenter projectFollowerPresenter;
 
     private final ProjectFilter projectFilter;
+
 
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
     MasterPresenter(PieChartStatusModule pieChartStatusModule,
                     ProjectOVPresenter projectOverviewPresenter,
+                    ProjectSheetPresenter projectSheetPresenter
                     ProjectFollowerPresenter projectFollowerPresenter,
                     ProjectFilter projectFilter){
         this.pieChartStatusModule = pieChartStatusModule;
         this.projectOverviewPresenter = projectOverviewPresenter;
         this.projectFollowerPresenter = projectFollowerPresenter;
+        this.projectSheetPresenter = projectSheetPresenter;
         this.projectFilter = projectFilter;
 
         init();
@@ -49,12 +55,18 @@ public class MasterPresenter {
         }
 
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
+
+        projectOverviewPresenter.getSelectedProject().addValueChangeListener( event ->
+                projectSheetPresenter.showInfoForProject(projectOverviewPresenter.getSelectedProjectItem()));
+
         pieChartStatusModule.addPointClickListener(event -> {
                     projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
                 });
 
         projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
 
+        projectSheetPresenter.getInformationCommittedFlag().addValueChangeListener(this::refreshModuleViews);
+      
         projectFollowerPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
 
         projectFilter.createFilter("projectID", projectFollowerPresenter.getFollowingProjects());
@@ -62,8 +74,9 @@ public class MasterPresenter {
     }
 
     private void refreshModuleViews(Property.ValueChangeEvent event){
-        makeFilter();
-        projectOverviewPresenter.refresh();
+
+        projectOverviewPresenter.refreshView();
+       
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
     }
 

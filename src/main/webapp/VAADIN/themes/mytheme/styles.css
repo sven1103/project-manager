@@ -12991,6 +12991,20 @@ div.v-layout.v-horizontal.v-widget {
 	color: #464646;
 }
 
+.mytheme .grid-max-size {
+	max-width: 600px;
+	width: 100%;
+}
+
+.mytheme .myformlayout-sheetcontent {
+	padding: 0px 20px 20px 20px;
+}
+
+.mytheme .overview-module-style {
+	width: 66%;
+	max-width: 866px;
+	margin: 0px 20px 20px 0px;
+
 .mytheme .slider-description-label {
 	font-style: italic;
 }
@@ -13003,4 +13017,5 @@ div.v-layout.v-horizontal.v-widget {
 .mytheme .v-sliderpanel-wrapper .v-sliderpanel-tab {
 	background: #555;
 	color: #fff;
+
 }

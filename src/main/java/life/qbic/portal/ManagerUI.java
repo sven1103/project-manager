@@ -5,14 +5,30 @@ import javax.servlet.annotation.WebServlet;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
+import com.vaadin.server.Responsive;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.HorizontalLayout;
+
 import com.vaadin.ui.Notification;
+
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 import life.qbic.openbis.openbisclient.OpenBisClient;
 import life.qbic.portal.database.ProjectDatabase;
+
+import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.projectOverviewModule.ProjectContentModel;
+import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
+import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
+import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
+import life.qbic.portal.projectSheetModule.ProjectSheetView;
+import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
+import org.apache.commons.collections.map.HashedMap;
+
 import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerModel;
@@ -22,6 +38,7 @@ import life.qbic.portal.projectFollowerModule.ProjectFollowerViewImpl;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vaadin.sliderpanel.SliderPanel;
@@ -84,7 +101,13 @@ public class ManagerUI extends UI {
         }
 
 
+
+        final CssLayout projectDescriptionLayout = new CssLayout();
+
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
+
         final Properties properties = getPropertiesFromFile("/etc/openbis_production.properties");
+
 
         final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("openbisuser"),
                 properties.getProperty("openbispw"), properties.getProperty("openbisURI"));
@@ -127,6 +150,30 @@ public class ManagerUI extends UI {
         final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
 
 
+        final ProjectSheetView projectSheetView = new ProjectSheetViewImplementation("Project Sheet");
+
+        final ProjectSheetPresenter projectSheetPresenter = new ProjectSheetPresenter(projectSheetView, projectDatabase, log);
+
+        final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
+                projectOVPresenter, projectSheetPresenter);
+
+
+        projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
+        projectOverviewModule.addStyleName("overview-module-style");
+        projectDescriptionLayout.setSizeFull();
+        projectDescriptionLayout.addComponent(projectOverviewModule);
+        projectDescriptionLayout.addComponent(projectSheetView.getProjectSheet());
+
+        projectSheetView.getProjectSheet().setSizeUndefined();
+        Responsive.makeResponsive(projectDescriptionLayout);
+
+        pieChartStatusModule.setHeight(300, Unit.PIXELS);
+
+        layout.addComponent(pieChartStatusModule);
+
+        layout.addComponent(projectDescriptionLayout);
+
+
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
                 projectOVPresenter, followerPresenter, projectFilter);
 
@@ -139,6 +186,7 @@ public class ManagerUI extends UI {
                 .animationDuration(100).build();
 
         //ChartOptions.get().setTheme(new GridTheme());
+
 
         sliderFrame.addComponent(sliderPanel);
         mainContent.addComponent(pieChartStatusModule);

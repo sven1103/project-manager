@@ -22,6 +22,8 @@ public interface ProjectDatabaseConnector {
 
     FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey) throws SQLException, WrongArgumentSettingsException;
 
+    JDBCConnectionPool getConnectionPool();
+
     FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey, List<String> followingProjects) throws SQLException, WrongArgumentSettingsException;
 
     JDBCConnectionPool getConnectionPool();
@@ -32,6 +34,5 @@ public interface ProjectDatabaseConnector {
 
     SQLContainer loadSelectedTableData(String tableName, String primaryKey)
             throws SQLException, RuntimeException;
-
 
 }
