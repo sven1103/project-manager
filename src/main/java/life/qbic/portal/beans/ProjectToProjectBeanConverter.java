@@ -9,9 +9,10 @@ public class ProjectToProjectBeanConverter {
 
     public static ProjectBean convertToProjectBean(Project project){
         ProjectBean newProject = new ProjectBean();
-
-        newProject.setSpace(project.getSpaceCode());
-        newProject.setCode(project.getCode());
+        newProject.setId(project.getPermId() != null ? project.getPermId() : "");
+        newProject.setSpace(project.getSpaceCode() != null ? project.getSpaceCode() : "");
+        newProject.setCode(project.getCode() != null ? project.getCode() : "");
+        newProject.setDescription(project.getDescription() != null ? project.getDescription() : "No description available");
 
         return newProject;
     }

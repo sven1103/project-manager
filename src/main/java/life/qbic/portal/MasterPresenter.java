@@ -1,6 +1,8 @@
 package life.qbic.portal;
 
 import com.vaadin.data.Property;
+import life.qbic.portal.database.ProjectFilter;
+import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,18 +18,28 @@ public class MasterPresenter {
 
     private final ProjectOVPresenter projectOverviewPresenter;
 
+    private final ProjectFollowerPresenter projectFollowerPresenter;
+
+    private final ProjectFilter projectFilter;
+
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
     MasterPresenter(PieChartStatusModule pieChartStatusModule,
-                    ProjectOVPresenter projectOverviewPresenter){
+                    ProjectOVPresenter projectOverviewPresenter,
+                    ProjectFollowerPresenter projectFollowerPresenter,
+                    ProjectFilter projectFilter){
         this.pieChartStatusModule = pieChartStatusModule;
         this.projectOverviewPresenter = projectOverviewPresenter;
+        this.projectFollowerPresenter = projectFollowerPresenter;
+        this.projectFilter = projectFilter;
 
         init();
     }
 
     private void init(){
+        makeFilter();
+
         try{
             projectOverviewPresenter.init();
             log.info("Init projectoverview module successfully.");
@@ -42,10 +54,21 @@ public class MasterPresenter {
                 });
 
         projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
+
+        projectFollowerPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
+
+        projectFilter.createFilter("projectID", projectFollowerPresenter.getFollowingProjects());
+
     }
 
     private void refreshModuleViews(Property.ValueChangeEvent event){
+        makeFilter();
+        projectOverviewPresenter.refresh();
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
+    }
+
+    private void makeFilter(){
+        projectFilter.createFilter("projectID", projectFollowerPresenter.getFollowingProjects());
     }
 
 }

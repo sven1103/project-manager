@@ -58,7 +58,7 @@ public class ProjectOVPresenter{
             return;
         }
 
-        overViewModule.sendInfo("Good Job", "Successfully connected to database");
+        log.info("Successfully connected to database");
 
         overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
 
@@ -116,7 +116,7 @@ public class ProjectOVPresenter{
     public void setFilter(String column, String filter){
         Container.Filter tmpFilter = new Like(column, filter);
         if(!contentModel.getTableContent().getContainerFilters().contains(tmpFilter)){
-            contentModel.getTableContent().removeAllContainerFilters();
+            contentModel.getTableContent().removeContainerFilters("projectStatus");
             contentModel.getTableContent().addContainerFilter(new Like(column, filter));
         } else{
             contentModel.getTableContent().removeContainerFilter(tmpFilter);
@@ -132,9 +132,19 @@ public class ProjectOVPresenter{
         overViewModule.sendInfo(caption, message);
     }
 
-    void triggerViewPropertyChanged(Property.ValueChangeEvent event){
+    private void triggerViewPropertyChanged(Property.ValueChangeEvent event){
         this.contentModel.updateFigure();
-        this.overviewModuleChanged.setValue(overviewModuleChanged.getValue() ? false : true);
+        this.overviewModuleChanged.setValue(!overviewModuleChanged.getValue());
+    }
+
+    public void refresh(){
+        try{
+            this.contentModel.init();
+        } catch (Exception exp){
+
+        }
+
+        this.overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
     }
 
     public ObjectProperty<Boolean> getIsChangedFlag(){

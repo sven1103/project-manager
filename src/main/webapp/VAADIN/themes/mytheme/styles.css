@@ -12990,3 +12990,17 @@ div.v-layout.v-horizontal.v-widget {
 	font-size: 14px;
 	color: #464646;
 }
+
+.mytheme .slider-description-label {
+	font-style: italic;
+}
+
+.mytheme .v-sliderpanel-wrapper .v-sliderpanel-content {
+	background: #555;
+	color: #fff;
+}
+
+.mytheme .v-sliderpanel-wrapper .v-sliderpanel-tab {
+	background: #555;
+	color: #fff;
+}
