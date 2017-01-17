@@ -13004,4 +13004,18 @@ div.v-layout.v-horizontal.v-widget {
 	width: 66%;
 	max-width: 866px;
 	margin: 0px 20px 20px 0px;
+
+.mytheme .slider-description-label {
+	font-style: italic;
+}
+
+.mytheme .v-sliderpanel-wrapper .v-sliderpanel-content {
+	background: #555;
+	color: #fff;
+}
+
+.mytheme .v-sliderpanel-wrapper .v-sliderpanel-tab {
+	background: #555;
+	color: #fff;
+
 }

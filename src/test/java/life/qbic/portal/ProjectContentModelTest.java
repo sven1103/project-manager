@@ -3,6 +3,7 @@ package life.qbic.portal;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.database.QuerryType;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.mockito.Mockito.*;
@@ -40,7 +42,8 @@ public class ProjectContentModelTest {
     @Before
     public void setUp() throws SQLException, WrongArgumentSettingsException {
         MockitoAnnotations.initMocks(this);
-        projectContentModel = new ProjectContentModel(projectDatabaseConnector);
+        ArrayList filter = new ArrayList();
+        projectContentModel = new ProjectContentModel(projectDatabaseConnector, filter);
 
         queryArguments.put("table", "projectsoverview");
         when(testQuerry.getCount()).thenReturn(1);

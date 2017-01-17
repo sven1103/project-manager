@@ -71,6 +71,20 @@
         width: 66%;
         max-width: 866px;
         margin: 0px 20px 20px 0px;
+
+      .slider-description-label{
+        font-style: italic;
+      }
+
+      .v-sliderpanel-wrapper .v-sliderpanel-content {
+        background: #555;
+        color: #fff;
+      }
+        
+      .v-sliderpanel-wrapper .v-sliderpanel-tab {
+        background: #555;
+        color: #fff;
+
       }
 
 }

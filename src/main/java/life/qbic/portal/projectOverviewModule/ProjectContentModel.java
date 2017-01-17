@@ -2,11 +2,14 @@ package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.database.QuerryType;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,13 +33,21 @@ public class ProjectContentModel{
 
     private HashMap<String, Double> keyFigures;
 
-    public ProjectContentModel(ProjectDatabaseConnector projectDatabaseConnector){
+    private List<String> followingProjects;
+
+    public ProjectContentModel(ProjectDatabaseConnector projectDatabaseConnector,
+                               List followingProjects){
         this.projectDatabaseConnector = projectDatabaseConnector;
+        this.followingProjects = followingProjects;
+    }
+
+    public List<String> getFollowingProjects(){
+        return this.followingProjects;
     }
 
     public final void init() throws SQLException, IllegalArgumentException, WrongArgumentSettingsException{
         projectDatabaseConnector.connectToDatabase();
-        this.tableContent = projectDatabaseConnector.loadCompleteTableData(queryArguments.get("table"), primaryKey);
+        this.tableContent = projectDatabaseConnector.loadSelectedTableData(queryArguments.get("table"), primaryKey);
         querryKeyFigures();
     }
 
@@ -59,9 +70,12 @@ public class ProjectContentModel{
         double projectsWithInProgressStatus;
         HashMap<String, Double> keyFigures = new HashMap<>();
 
-        projectsWithOpenStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, queryArguments, primaryKey).getCount();
-        projectsWithClosedStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, queryArguments, primaryKey).getCount();
-        projectsWithInProgressStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, queryArguments, primaryKey).getCount();
+        projectsWithOpenStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, queryArguments, primaryKey, followingProjects).getCount();
+        System.out.println(projectsWithOpenStatus);
+        projectsWithClosedStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_CLOSED, queryArguments, primaryKey, followingProjects).getCount();
+        System.out.println(projectsWithClosedStatus);
+        projectsWithInProgressStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_INPROGRESS, queryArguments, primaryKey, followingProjects).getCount();
+        System.out.println(projectsWithInProgressStatus);
 
         keyFigures.put("closed", projectsWithClosedStatus);
         keyFigures.put("open", projectsWithOpenStatus);

@@ -5,8 +5,11 @@ import com.vaadin.data.util.sqlcontainer.SQLContainer;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 
+import javax.sql.PooledConnection;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by sven on 12/10/16.
@@ -21,5 +24,15 @@ public interface ProjectDatabaseConnector {
 
     JDBCConnectionPool getConnectionPool();
 
+    FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey, List<String> followingProjects) throws SQLException, WrongArgumentSettingsException;
+
+    JDBCConnectionPool getConnectionPool();
+
+    void setProjectFilter(ProjectFilter filter);
+
+    ProjectFilter getProjectFilter();
+
+    SQLContainer loadSelectedTableData(String tableName, String primaryKey)
+            throws SQLException, RuntimeException;
 
 }

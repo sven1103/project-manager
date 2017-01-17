@@ -24,7 +24,7 @@ public class ProjectOverviewModule extends VerticalLayout implements ProjectOver
     List<Column> columnList;
 
     public final HashSet columnHide = new HashSet<String>(){{
-        add("projectID");
+        add("id");
         add("investigatorID");
         add("instrumentID");
         add("offerID");
