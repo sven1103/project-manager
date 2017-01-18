@@ -25,13 +25,12 @@ public class MasterPresenter {
 
     private final ProjectFilter projectFilter;
 
-
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
     MasterPresenter(PieChartStatusModule pieChartStatusModule,
                     ProjectOVPresenter projectOverviewPresenter,
-                    ProjectSheetPresenter projectSheetPresenter
+                    ProjectSheetPresenter projectSheetPresenter,
                     ProjectFollowerPresenter projectFollowerPresenter,
                     ProjectFilter projectFilter){
         this.pieChartStatusModule = pieChartStatusModule;
@@ -50,7 +49,7 @@ public class MasterPresenter {
             projectOverviewPresenter.init();
             log.info("Init projectoverview module successfully.");
         } catch (Exception exp){
-            log.fatal("Init of projectoverview module failed. Reason: " + exp.getMessage());
+            log.fatal("Init of projectoverview module failed. Reason: " + exp.getMessage(), exp);
             projectOverviewPresenter.sendError("Project Overview Module failed.", exp.getMessage());
         }
 
@@ -74,9 +73,8 @@ public class MasterPresenter {
     }
 
     private void refreshModuleViews(Property.ValueChangeEvent event){
-
+        makeFilter();
         projectOverviewPresenter.refreshView();
-       
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
     }
 

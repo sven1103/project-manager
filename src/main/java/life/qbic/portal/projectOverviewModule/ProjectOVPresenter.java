@@ -151,15 +151,6 @@ public class ProjectOVPresenter{
 
     }
 
-    public void refresh(){
-        try{
-            this.contentModel.init();
-        } catch (Exception exp){
-
-        }
-        this.overViewModule.getOverviewGrid().setContainerDataSource(contentModel.getTableContent());
-    }
-
     public ObjectProperty<Boolean> getIsChangedFlag(){
         return this.overviewModuleChanged;
     }
@@ -172,9 +163,10 @@ public class ProjectOVPresenter{
 
     public void refreshView() {
         try{
+            System.out.println("Refresh view!");
             this.contentModel.refresh();
-            this.overViewModule.getOverviewGrid().refreshVisibleRows();
-            this.overViewModule.getOverviewGrid().clearSortOrder();
+            System.out.println(this.overViewModule.getOverviewGrid().isEditorActive());
+            this.overViewModule.init();
             renderTable();
         } catch (Exception exc){
             log.error("Could not refresh the project overview model.", exc);

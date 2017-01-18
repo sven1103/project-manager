@@ -103,14 +103,6 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
     }
 
 
-    private Container.Filter[] makeFilterList(String propertyID, List<String> inclusionValues){
-        Container.Filter[] filterArray = new Container.Filter[inclusionValues.size()];
-        int i=0;
-        for (String toFilter: inclusionValues) {
-            filterArray[i++] = new Compare.Equal(propertyID, toFilter);
-        }
-        return filterArray;
-    }
 
 
 }

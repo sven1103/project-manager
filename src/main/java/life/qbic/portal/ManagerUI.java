@@ -91,9 +91,9 @@ public class ManagerUI extends UI {
 
         final ProjectFilter projectFilter = new ProjectFilter();
 
-        final ProjectDatabase projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
-                credentials.get("sqlpassword"),
-                projectFilter);
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
+                credentials.get("sqlpassword"), projectFilter);
+
         try{
             projectDatabase.connectToDatabase();
         } catch (SQLException exp){
@@ -101,10 +101,8 @@ public class ManagerUI extends UI {
         }
 
 
-
         final CssLayout projectDescriptionLayout = new CssLayout();
 
-        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"), credentials.get("sqlpassword"));
 
         final Properties properties = getPropertiesFromFile("/etc/openbis_production.properties");
 
@@ -155,7 +153,7 @@ public class ManagerUI extends UI {
         final ProjectSheetPresenter projectSheetPresenter = new ProjectSheetPresenter(projectSheetView, projectDatabase, log);
 
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter, projectSheetPresenter);
+                projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter);
 
 
         projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
@@ -165,18 +163,10 @@ public class ManagerUI extends UI {
         projectDescriptionLayout.addComponent(projectSheetView.getProjectSheet());
 
         projectSheetView.getProjectSheet().setSizeUndefined();
+
         Responsive.makeResponsive(projectDescriptionLayout);
 
         pieChartStatusModule.setHeight(300, Unit.PIXELS);
-
-        layout.addComponent(pieChartStatusModule);
-
-        layout.addComponent(projectDescriptionLayout);
-
-
-        final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter, followerPresenter, projectFilter);
-
 
         final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())
                 .caption("FOLLOW PROJECTS")
@@ -190,7 +180,7 @@ public class ManagerUI extends UI {
 
         sliderFrame.addComponent(sliderPanel);
         mainContent.addComponent(pieChartStatusModule);
-        mainContent.addComponent(projectOverviewModule);
+        mainContent.addComponent(projectDescriptionLayout);
         mainFrame.addComponent(sliderFrame);
         mainFrame.addComponent(mainContent);
 

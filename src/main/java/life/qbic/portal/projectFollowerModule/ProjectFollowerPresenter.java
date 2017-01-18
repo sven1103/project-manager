@@ -173,7 +173,14 @@ public class ProjectFollowerPresenter {
         return this.isChangedFlag;
     }
 
-    public List<String> getFollowingProjects(){return this.followingProjects;}
+    public List<String> getFollowingProjects(){
+        try{
+            refreshProjects();
+        } catch (Exception exp){
+            System.err.println("Refreshing failed.");
+        }
+        return this.followingProjects;
+    }
 
 
 }

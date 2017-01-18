@@ -26,8 +26,6 @@ public interface ProjectDatabaseConnector {
 
     FreeformQuery makeFreeFormQuery(QuerryType type, HashMap arguments, String primaryKey, List<String> followingProjects) throws SQLException, WrongArgumentSettingsException;
 
-    JDBCConnectionPool getConnectionPool();
-
     void setProjectFilter(ProjectFilter filter);
 
     ProjectFilter getProjectFilter();

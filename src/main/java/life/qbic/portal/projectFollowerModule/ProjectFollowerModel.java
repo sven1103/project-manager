@@ -3,6 +3,7 @@ package life.qbic.portal.projectFollowerModule;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
 import life.qbic.portal.database.ProjectDatabase;
+import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.database.QuerryType;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 
@@ -17,7 +18,7 @@ import java.util.*;
  */
 public class ProjectFollowerModel {
 
-    private final ProjectDatabase projectDatabase;
+    private final ProjectDatabaseConnector projectDatabase;
 
     private final List<String> allFollingProjects = new ArrayList<>();
     private final HashMap<String, String> querySettings = new HashMap<>();
@@ -25,7 +26,7 @@ public class ProjectFollowerModel {
     private final Map<String, String> spaceProjectMap= new HashMap<>();
 
 
-    public ProjectFollowerModel(ProjectDatabase projectDatabase){
+    public ProjectFollowerModel(ProjectDatabaseConnector projectDatabase){
         this.projectDatabase = projectDatabase;
     }
 

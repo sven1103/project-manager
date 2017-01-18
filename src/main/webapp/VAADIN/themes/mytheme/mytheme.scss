@@ -58,11 +58,6 @@
         color: #464646;
       }
 
-      .grid-max-size{
-        max-width: 600px;
-        width: 100%;
-      }
-
       .myformlayout-sheetcontent{
         padding: 0px 20px 20px 20px;
       }
@@ -71,10 +66,16 @@
         width: 66%;
         max-width: 866px;
         margin: 0px 20px 20px 0px;
+        }
 
       .slider-description-label{
         font-style: italic;
       }
+
+       .grid-max-size{
+              max-width: 600px;
+              width: 100%;
+            }
 
       .v-sliderpanel-wrapper .v-sliderpanel-content {
         background: #555;

@@ -93,7 +93,7 @@ public class ProjectContentModel{
     }
 
     public void refresh() throws SQLException, WrongArgumentSettingsException{
-        this.tableContent = projectDatabaseConnector.loadCompleteTableData(queryArguments.get("table"), primaryKey);
+        this.tableContent = projectDatabaseConnector.loadSelectedTableData(queryArguments.get("table"), primaryKey);
         querryKeyFigures();
     }
 
