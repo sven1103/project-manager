@@ -1,6 +1,7 @@
 package life.qbic.portal.projectOverviewModule;
 
 import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.Field;
 
 import java.util.ArrayList;
@@ -51,6 +52,11 @@ public class ColumnFieldTypes {
         REPORTSENT.addItem("no");
         REPORTSENT.addItem("in progress");
         REPORTSENT.addItem("done");
+    }
+
+    static DateField RAWDATAREGISTERED = new DateField();
+    static {
+        RAWDATAREGISTERED.setDateFormat("yyyy-MM-dd");
     }
 
     static ArrayList<Field> fields = new ArrayList<>();

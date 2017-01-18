@@ -27,8 +27,7 @@ public class ProjectOverviewModule extends VerticalLayout implements ProjectOver
         add("id");
         add("investigatorID");
         add("instrumentID");
-        add("offerID");
-        add("invoice");
+        add("projectRegistered");
     }};
 
 

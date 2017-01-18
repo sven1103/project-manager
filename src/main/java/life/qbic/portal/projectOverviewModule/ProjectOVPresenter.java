@@ -9,8 +9,10 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
+import com.vaadin.ui.renderers.DateRenderer;
 import life.qbic.portal.database.ColumnTypes;
 import life.qbic.portal.database.TableColumns;
 import life.qbic.portal.database.WrongArgumentSettingsException;
@@ -97,6 +99,10 @@ public class ProjectOVPresenter{
         setFieldType("dataProcessed", ColumnFieldTypes.DATAPROCESSED);
         setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
         setFieldType("reportSent", ColumnFieldTypes.REPORTSENT);
+        setFieldType("rawDataRegistered", ColumnFieldTypes.RAWDATAREGISTERED);
+
+        overViewModule.getOverviewGrid().getColumn("rawDataRegistered").
+                setRenderer(new DateRenderer(new SimpleDateFormat("yyyy-MM-dd")));
 
         overViewModule.getOverviewGrid().setCellStyleGenerator(cellReference -> {
             if ("no".equals(cellReference.getValue())){

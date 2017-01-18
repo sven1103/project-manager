@@ -13014,17 +13014,12 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .overview-module-style {
 	width: 66%;
-	max-width: 866px;
+	max-width: 1200px;
 	margin: 0px 20px 20px 0px;
 }
 
 .mytheme .slider-description-label {
 	font-style: italic;
-}
-
-.mytheme .grid-max-size {
-	max-width: 600px;
-	width: 100%;
 }
 
 .mytheme .v-sliderpanel-wrapper .v-sliderpanel-content {
