@@ -3,8 +3,10 @@ package life.qbic.portal;
 import com.vaadin.addon.charts.Chart;
 import com.vaadin.addon.charts.PointClickEvent;
 import com.vaadin.addon.charts.model.*;
+import com.vaadin.addon.charts.model.style.Color;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -54,7 +56,11 @@ public class PieChartStatusModule extends Chart{
             plotOptions.setAnimation(false);
         }
         dataSeries.clear();
+
+        Iterator<Color> dataSeriesColors = DataSeriesColors.SHADELIST.iterator();
+
         seriesMap.forEach((String key, DataSeriesItem item) -> {
+            item.setColor(dataSeriesColors.next());
             dataSeries.add(item, true, false);
         });
 
@@ -63,6 +69,10 @@ public class PieChartStatusModule extends Chart{
 
     public String getDataSeriesObject(PointClickEvent event){
         return this.dataSeries.get(event.getPointIndex()).getName();
+    }
+
+    public DataSeriesItem getDataSeriesItem(PointClickEvent event){
+        return this.dataSeries.get(event.getPointIndex());
     }
 
 
