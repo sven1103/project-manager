@@ -183,5 +183,9 @@ public class ProjectFollowerPresenter {
         return this.followingProjects;
     }
 
+    public String getCurrentProject(){
+        return this.currentProject;
+    }
+
 
 }

@@ -70,6 +70,14 @@ public class MasterPresenter {
 
         projectFilter.createFilter("projectID", projectFollowerPresenter.getFollowingProjects());
 
+        projectFollowerPresenter.getIsChangedFlag().addValueChangeListener(event -> {
+            final String selectedProject = projectFollowerPresenter.getCurrentProject();
+            boolean doesDBEntryExist = projectOverviewPresenter.isProjectInFollowingTable(selectedProject);
+            if(!doesDBEntryExist){
+                projectOverviewPresenter.createNewProjectEntry(selectedProject);
+            }
+        });
+
     }
 
     private void refreshModuleViews(Property.ValueChangeEvent event){

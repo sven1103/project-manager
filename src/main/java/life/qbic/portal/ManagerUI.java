@@ -145,7 +145,7 @@ public class ManagerUI extends UI {
 
         final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule();
 
-        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, log);
+        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, projectDatabase, log);
 
 
         final ProjectSheetView projectSheetView = new ProjectSheetViewImplementation("Project Sheet");
@@ -174,8 +174,6 @@ public class ManagerUI extends UI {
                 .tabPosition(SliderTabPosition.MIDDLE)
                 .style("slider-format")
                 .animationDuration(100).build();
-
-        //ChartOptions.get().setTheme(new GridTheme());
 
 
         sliderFrame.addComponent(sliderPanel);
