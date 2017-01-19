@@ -5,12 +5,16 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.filter.Like;
+import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +23,7 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.renderers.DateRenderer;
 import com.vaadin.ui.themes.ValoTheme;
 import life.qbic.portal.database.ColumnTypes;
+import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.database.TableColumns;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import org.apache.commons.logging.Log;
@@ -40,18 +45,24 @@ public class ProjectOVPresenter{
 
     private final ProjectOverviewModule overViewModule;
 
+    private final String overviewTable = "projectsoverview";
+
     private final ObjectProperty<Boolean> overviewModuleChanged = new ObjectProperty<>(true);
 
     private final ObjectProperty<String> selectedProject = new ObjectProperty<>("");
 
+    private final ProjectDatabaseConnector connection;
+
     private Item selectedProjectItem = null;
 
     public ProjectOVPresenter(ProjectContentModel model,
-                       ProjectOverviewModule overViewModule,
-                       Log log){
+                              ProjectOverviewModule overViewModule,
+                              ProjectDatabaseConnector connection,
+                              Log log){
         this.contentModel = model;
         this.log = log;
         this.overViewModule = overViewModule;
+        this.connection = connection;
     }
 
     /**
@@ -90,6 +101,9 @@ public class ProjectOVPresenter{
 
     }
 
+    /**
+     * Beautify the grid
+     */
     private void renderTable(){
         overViewModule.columnList = overViewModule.getOverviewGrid().getColumns();
         overViewModule.columnList.forEach((Grid.Column column) -> {
@@ -135,6 +149,11 @@ public class ProjectOVPresenter{
         filter.setDateFilter("rawDataRegistered", new SimpleDateFormat("yyyy-MM-dd"), true);
     }
 
+    /**
+     * Implement the filter row in the header of the grid
+     * @param grid The overview Grid reference
+     * @param filter The GridCellFilter reference
+     */
     private void initExtraHeaderRow(final Grid grid, final GridCellFilter filter){
         Grid.HeaderRow firstHeaderRow = grid.prependHeaderRow();
         firstHeaderRow.join("projectID", "offerID", "projectStatus", "barcodeSent", "rawDataRegistered",
@@ -158,7 +177,10 @@ public class ProjectOVPresenter{
         }
     }
 
-
+    /**
+     * Query the status key figures from the model for the statistics overview
+     * @return A map with the key figures
+     */
     public Map<String, Double> getStatusKeyFigures(){
         return contentModel.getKeyFigures();
     }
@@ -238,6 +260,72 @@ public class ProjectOVPresenter{
             this.overViewModule.getOverviewGrid().setContainerDataSource(this.contentModel.getTableContent());
         } catch (Exception exc){
             log.error("Could not refresh the project overview model.", exc);
+        }
+    }
+
+    public boolean isProjectInFollowingTable(String projectCode) {
+
+        String query = String.format("SELECT * FROM %s WHERE projectID=\'%s\'", overviewTable, projectCode);
+
+        JDBCConnectionPool pool = connection.getConnectionPool();
+        Connection conn = null;
+        try{
+            conn = pool.reserveConnection();
+        } catch (SQLException exc){
+            log.error("Could not reserve a SQL connection.", exc);
+        }
+
+        int size = 0;
+
+        try {
+            if (conn != null) {
+                Statement statement = conn.createStatement();
+                ResultSet resultSet = statement.executeQuery(query);
+
+                try {
+                    resultSet.last();
+                    size = resultSet.getRow();
+                    System.out.println(size);
+                    resultSet.beforeFirst();
+                }
+                catch(Exception ex) {
+                    size = 0;
+                }
+                statement.close();
+                conn.commit();
+            }
+        } catch (SQLException exc){
+            log.error("Exception during statement creation!", exc);
+        } finally {
+            pool.releaseConnection(conn);
+        }
+        return size > 0;
+
+    }
+
+    public void createNewProjectEntry(String selectedProject) {
+
+        String query = String.format("INSERT INTO %s (projectID) VALUES (\'%s\')", overviewTable, selectedProject);
+
+        JDBCConnectionPool pool = connection.getConnectionPool();
+        Connection conn = null;
+        try{
+            conn = pool.reserveConnection();
+        } catch (SQLException exc){
+            log.error("Could not reserve a SQL connection.", exc);
+        }
+
+        try {
+            if (conn != null) {
+                Statement statement = conn.createStatement();
+                statement.executeUpdate(query);
+                statement.close();
+                conn.commit();
+            }
+        } catch (SQLException exc){
+            log.error("Exception during statement creation!", exc);
+        } finally {
+            pool.releaseConnection(conn);
         }
 
     }
