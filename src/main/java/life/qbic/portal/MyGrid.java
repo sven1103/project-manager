@@ -5,6 +5,7 @@ import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.server.Extension;
 import com.vaadin.server.communication.data.RpcDataProviderExtension;
 import com.vaadin.ui.Grid;
+import org.vaadin.gridutil.cell.GridCellFilter;
 
 import java.util.Collection;
 
@@ -18,6 +19,8 @@ public class MyGrid extends Grid {
     public MyGrid(){
         setEditorEnabled(true);
         setEditorBuffered(true);
+        setSelectionMode(SelectionMode.SINGLE);
+
     }
 
     @Override

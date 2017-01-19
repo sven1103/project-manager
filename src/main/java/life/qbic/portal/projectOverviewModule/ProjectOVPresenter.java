@@ -5,18 +5,25 @@ import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
 import com.vaadin.data.util.filter.Like;
+import com.vaadin.server.FontAwesome;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.Grid;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.themes.ValoTheme;
 import life.qbic.portal.database.ColumnTypes;
 import life.qbic.portal.database.TableColumns;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import org.apache.commons.logging.Log;
+import org.vaadin.gridutil.GridUtil;
+import org.vaadin.gridutil.cell.GridCellFilter;
 
 /**
  * This presenter class will connect the UI with the underlying
@@ -103,6 +110,8 @@ public class ProjectOVPresenter{
 
         overViewModule.getOverviewGrid().getColumn("rawDataRegistered").
                 setRenderer(new DateRenderer(new SimpleDateFormat("yyyy-MM-dd")));
+        overViewModule.getOverviewGrid().getColumn("rawDataRegistered").setMaximumWidth(250d);
+        overViewModule.getOverviewGrid().getColumn("projectID").setMaximumWidth(120d);
 
         overViewModule.getOverviewGrid().setCellStyleGenerator(cellReference -> {
             if ("no".equals(cellReference.getValue())){
@@ -114,8 +123,30 @@ public class ProjectOVPresenter{
             if ("done".equals(cellReference.getValue())){
                 return "v-grid-cell-done";
             }
+            if (cellReference.getPropertyId().equals("rawDataRegistered")){
+                return GridUtil.ALIGN_CELL_CENTER;
+            }
             return "v-grid-cell-normal";
         });
+
+        final GridCellFilter filter = new GridCellFilter(overViewModule.getOverviewGrid());
+        initExtraHeaderRow(overViewModule.getOverviewGrid(), filter);
+        filter.setTextFilter("projectID", true, true);
+        filter.setDateFilter("rawDataRegistered", new SimpleDateFormat("yyyy-MM-dd"), true);
+    }
+
+    private void initExtraHeaderRow(final Grid grid, final GridCellFilter filter){
+        Grid.HeaderRow firstHeaderRow = grid.prependHeaderRow();
+        firstHeaderRow.join("projectID", "offerID", "projectStatus", "barcodeSent", "rawDataRegistered",
+                "dataProcessed", "dataAnalyzed", "reportSent", "invoice");
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setSpacing(true);
+        firstHeaderRow.getCell("projectID").setComponent(buttonLayout);
+        Button clearAllFilters = new Button("clearAllFilters", (Button.ClickListener) clickEvent ->
+            filter.clearAllFilters());
+        clearAllFilters.setIcon(FontAwesome.TIMES);
+        clearAllFilters.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED);
+        buttonLayout.addComponent(clearAllFilters);
     }
 
 
@@ -167,13 +198,44 @@ public class ProjectOVPresenter{
         return this.selectedProjectItem;
     }
 
+    /**
+     * Refreshes the grid
+     */
     public void refreshView() {
         try{
-            System.out.println("Refresh view!");
+            // First, refresh the model (new SQL query!)
             this.contentModel.refresh();
-            System.out.println(this.overViewModule.getOverviewGrid().isEditorActive());
+
+            int timer = 0;
+
+            /*
+            If a content change happens, the editor is active.
+            Since we are doing autocommit to the backend database,
+            we have to wait until this is finished.
+             */
+            while(true){
+                try{
+                    this.overViewModule.getOverviewGrid().cancelEditor();
+                } catch (Exception exp){
+
+                }
+                if (timer == 5){
+                    break;
+                } else if(!this.overViewModule.getOverviewGrid().isEditorActive()){
+                    break;
+                }
+                TimeUnit.MILLISECONDS.sleep(500);
+                timer++;
+            }
+
+            // Second, update the grid
+            /*
+            The order of the next two lines is crucial!
+            Do not change it, otherwise the grid will not
+            be refreshed properly
+             */
             this.overViewModule.init();
-            renderTable();
+            this.overViewModule.getOverviewGrid().setContainerDataSource(this.contentModel.getTableContent());
         } catch (Exception exc){
             log.error("Could not refresh the project overview model.", exc);
         }

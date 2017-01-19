@@ -176,6 +176,7 @@ public class ProjectFollowerPresenter {
     public List<String> getFollowingProjects(){
         try{
             refreshProjects();
+            followingProjects.forEach(System.out::println);
         } catch (Exception exp){
             System.err.println("Refreshing failed.");
         }
