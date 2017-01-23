@@ -145,7 +145,8 @@ public class ManagerUI extends UI {
 
         final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule();
 
-        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model, projectOverviewModule, projectDatabase, log);
+        final ProjectOVPresenter projectOVPresenter = new ProjectOVPresenter(model,
+                projectOverviewModule, projectDatabase, openBisConnection, log);
 
 
         final ProjectSheetView projectSheetView = new ProjectSheetViewImplementation("Project Sheet");
