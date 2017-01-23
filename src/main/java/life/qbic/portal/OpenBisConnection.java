@@ -30,6 +30,13 @@ public class OpenBisConnection {
         return true;
     }
 
+    public String getSpaceOfProject(String projectCode){
+        if (this.openBisClient == null){
+            return null;
+        }
+        return openBisClient.getProjectByCode(projectCode).getSpaceCode();
+    }
+
     public BeanItemContainer<ProjectBean> getListOfProjects(){
         if (this.openBisClient == null){
             return null;

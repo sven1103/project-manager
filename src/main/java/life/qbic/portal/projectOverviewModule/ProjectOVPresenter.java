@@ -4,6 +4,7 @@ import com.vaadin.data.Container;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.ObjectProperty;
+import com.vaadin.data.util.converter.Converter;
 import com.vaadin.data.util.filter.Like;
 import com.vaadin.data.util.sqlcontainer.connection.JDBCConnectionPool;
 import com.vaadin.server.FontAwesome;
@@ -16,12 +17,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.renderers.DateRenderer;
+import com.vaadin.ui.renderers.HtmlRenderer;
 import com.vaadin.ui.themes.ValoTheme;
+import life.qbic.portal.OpenBisConnection;
 import life.qbic.portal.database.ColumnTypes;
 import life.qbic.portal.database.ProjectDatabaseConnector;
 import life.qbic.portal.database.TableColumns;
@@ -53,16 +57,22 @@ public class ProjectOVPresenter{
 
     private final ProjectDatabaseConnector connection;
 
+    private final OpenBisConnection openBisConnection;
+
+    private final String portalURL = "https://portal.qbic.uni-tuebingen.de/portal/web/qbic/qnavigator#!project/";
+
     private Item selectedProjectItem = null;
 
     public ProjectOVPresenter(ProjectContentModel model,
                               ProjectOverviewModule overViewModule,
                               ProjectDatabaseConnector connection,
+                              OpenBisConnection openBisConnection,
                               Log log){
         this.contentModel = model;
         this.log = log;
         this.overViewModule = overViewModule;
         this.connection = connection;
+        this.openBisConnection = openBisConnection;
     }
 
     /**
@@ -142,6 +152,34 @@ public class ProjectOVPresenter{
             }
             return "v-grid-cell-normal";
         });
+
+        final Grid.Column projectID = overViewModule.getOverviewGrid().
+                getColumn(TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.PROJECTID));
+
+        projectID.setRenderer(new HtmlRenderer(), new Converter<String, String>() {
+
+            @Override
+            public String convertToModel(String s, Class<? extends String> aClass, Locale locale) throws ConversionException {
+                return "not implemented";
+            }
+
+            @Override
+            public String convertToPresentation(String project, Class<? extends String> aClass, Locale locale) throws ConversionException {
+                String space = openBisConnection.getSpaceOfProject(project);
+                return String.format("<a href='%s/%s/%s' target='_blank'>%s</a>", portalURL, space, project, project);
+            }
+
+            @Override
+            public Class<String> getModelType() {
+                return String.class;
+            }
+
+            @Override
+            public Class<String> getPresentationType() {
+                return String.class;
+            }
+        });
+
 
         final GridCellFilter filter = new GridCellFilter(overViewModule.getOverviewGrid());
         initExtraHeaderRow(overViewModule.getOverviewGrid(), filter);
