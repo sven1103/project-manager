@@ -367,4 +367,8 @@ public class ProjectOVPresenter{
         }
 
     }
+
+    public Map<String, Integer> getTimeLineStats(){
+        return this.contentModel.getProjectesTimeLineStats();
+    }
 }

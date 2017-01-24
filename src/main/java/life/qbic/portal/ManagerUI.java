@@ -2,6 +2,7 @@ package life.qbic.portal;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.addon.charts.model.ListSeries;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -27,6 +28,10 @@ import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
 import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetView;
 import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
+import life.qbic.portal.projectsTimeLineChart.TimeLineChart;
+import life.qbic.portal.projectsTimeLineChart.TimeLineChartPresenter;
+import life.qbic.portal.projectsTimeLineChart.TimeLineModel;
+import life.qbic.portal.projectsTimeLineChart.TimeLineStats;
 import org.apache.commons.collections.map.HashedMap;
 
 import life.qbic.portal.database.ProjectFilter;
@@ -91,6 +96,8 @@ public class ManagerUI extends UI {
 
         final ProjectFilter projectFilter = new ProjectFilter();
 
+        final CssLayout statisticsPanel = new CssLayout();
+
         final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
                 credentials.get("sqlpassword"), projectFilter);
 
@@ -153,8 +160,18 @@ public class ManagerUI extends UI {
 
         final ProjectSheetPresenter projectSheetPresenter = new ProjectSheetPresenter(projectSheetView, projectDatabase, log);
 
+        final TimeLineChart timeLineChart = new TimeLineChart();
+
+        timeLineChart.setTitle("Test statistics");
+
+        final TimeLineStats timeLineModel = new TimeLineModel();
+
+        final TimeLineChartPresenter timeLineChartPresenter = new TimeLineChartPresenter(timeLineModel, timeLineChart);
+
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter);
+                projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
+
+
 
 
         projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
@@ -167,7 +184,6 @@ public class ManagerUI extends UI {
 
         Responsive.makeResponsive(projectDescriptionLayout);
 
-        pieChartStatusModule.setHeight(300, Unit.PIXELS);
 
         final SliderPanel sliderPanel = new SliderPanelBuilder(followerView.getUI())
                 .caption("FOLLOW PROJECTS")
@@ -178,13 +194,19 @@ public class ManagerUI extends UI {
 
 
         sliderFrame.addComponent(sliderPanel);
-        mainContent.addComponent(pieChartStatusModule);
+        statisticsPanel.addComponent(pieChartStatusModule);
+        statisticsPanel.addComponent(timeLineChart);
+        Responsive.makeResponsive(statisticsPanel);
+
+        timeLineChart.setSizeUndefined();
+        pieChartStatusModule.setSizeUndefined();
+
+        mainContent.addComponent(statisticsPanel);
         mainContent.addComponent(projectDescriptionLayout);
         mainFrame.addComponent(sliderFrame);
         mainFrame.addComponent(mainContent);
 
         mainFrame.setExpandRatio(mainContent, 1);
-        mainFrame.setSizeFull();
         setContent(mainFrame);
     }
 
