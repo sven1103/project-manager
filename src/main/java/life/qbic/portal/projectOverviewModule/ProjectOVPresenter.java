@@ -200,6 +200,15 @@ public class ProjectOVPresenter{
         projectStatus.add("in progress");
         projectStatus.add("closed");
         filter.setComboBoxFilter("projectStatus", projectStatus);
+        final List<String> generalStatus = new ArrayList<>();
+        generalStatus.add("no");
+        generalStatus.add("in progress");
+        generalStatus.add("closed");
+        filter.setComboBoxFilter("dataProcessed", generalStatus);
+        filter.setComboBoxFilter("dataAnalyzed", generalStatus);
+        filter.setComboBoxFilter("reportSent", generalStatus);
+        filter.setTextFilter("invoice", true, true);
+
     }
 
     /**
