@@ -1,16 +1,14 @@
 package life.qbic.portal.projectOverviewModule;
 
+import com.vaadin.data.Property;
 import com.vaadin.data.util.sqlcontainer.SQLContainer;
-import life.qbic.portal.database.ProjectDatabaseConnector;
-import life.qbic.portal.database.ProjectFilter;
-import life.qbic.portal.database.QuerryType;
-import life.qbic.portal.database.WrongArgumentSettingsException;
+import life.qbic.portal.database.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by sven on 11/13/16.
@@ -49,6 +47,7 @@ public class ProjectContentModel{
         projectDatabaseConnector.connectToDatabase();
         this.tableContent = projectDatabaseConnector.loadSelectedTableData(queryArguments.get("table"), primaryKey);
         querryKeyFigures();
+        getProjectesTimeLineStats();
     }
 
     /**
@@ -100,6 +99,69 @@ public class ProjectContentModel{
 
     public Map<String, Double> getKeyFigures(){
         return this.keyFigures;
+    }
+
+    /**
+     * Request project timeline statistics
+     * @return A map containing values for different categories
+     */
+    public Map<String, Integer> getProjectesTimeLineStats() {
+        final Map<String, Integer> projectsStats = new HashMap<>();
+
+        if (tableContent == null){
+            return projectsStats;
+        }
+
+        writeNumberProjectsPerTimeIntervalFromStart(projectsStats);
+
+        return projectsStats;
+
+    }
+
+    /**
+     * Helper function that computes the project timeline statistics
+     * @param container map that is going to be filled with stats
+     */
+    private void writeNumberProjectsPerTimeIntervalFromStart(Map<String, Integer> container){
+
+        Collection<?> itemIds = tableContent.getItemIds();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        List<Date> dateList = new ArrayList<>();
+
+        container.put("0 to 2 weeks", 0);
+        container.put("2 to 6 weeks", 0);
+        container.put("6 to 12 weeks", 0);
+        container.put("> 12 weeks", 0);
+
+        for(Object itemId : itemIds){
+            String registeredDateCol = TableColumns.PROJECTOVERVIEWTABLE.get(ColumnTypes.RAWDATAREGISTERED);
+            Property property = tableContent.getContainerProperty(itemId, registeredDateCol);
+
+            try{
+                Date registration = dateFormat.parse((property.getValue()).toString());
+                if(registration != null){
+                    dateList.add(registration);
+                }
+            } catch (Exception exc){
+               //Do nothing
+            }
+        }
+
+        Date currentDate = new Date();
+
+        for(Date date : dateList){
+            long daysPassed = TimeUnit.DAYS.convert(currentDate.getTime() - date.getTime(), TimeUnit.MILLISECONDS);
+            if (daysPassed/7 < 2)
+                container.put("0 to 2 weeks", container.get("0 to 2 weeks")+1);
+            else if (daysPassed/7 < 6)
+                container.put("2 to 6 weeks", container.get("2 to 6 weeks")+1);
+            else if (daysPassed/7 < 12)
+                container.put("6 to 12 weeks", container.get("6 to 12 weeks")+1);
+            else
+                container.put("> 12 weeks", container.get("> 12 weeks")+1);
+        }
     }
 
 }
