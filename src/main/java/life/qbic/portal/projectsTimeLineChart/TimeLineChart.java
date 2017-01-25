@@ -19,11 +19,17 @@ public class TimeLineChart extends Chart {
 
     private List<Series> statsSeries;
 
+    private PlotOptionsColumn plotOptions;
+
     public TimeLineChart(){
         super(ChartType.COLUMN);
         configuration = this.getConfiguration();
+        plotOptions = new PlotOptionsColumn();
         xAxis = new XAxis();
         yAxis = new YAxis();
+
+        plotOptions.setAnimation(false);
+        configuration.addPlotOptions(plotOptions);
     }
 
     public TimeLineChart setTitle(String title){

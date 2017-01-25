@@ -19,6 +19,7 @@ public class TimeLineChartPresenter {
     public void setCategories(Map<String, Integer> stats){
         this.timeLineModel.setCategories(stats);
         this.chart.setCategories("Project age", timeLineModel.getCategories());
+        this.chart.setYaxis("Number of projects");
         this.chart.addSeries(timeLineModel.getValues());
         this.chart.createChart();
     }

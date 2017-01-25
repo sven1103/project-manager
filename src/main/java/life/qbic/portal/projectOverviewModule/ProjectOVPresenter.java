@@ -125,7 +125,6 @@ public class ProjectOVPresenter{
 
         ColumnFieldTypes.clearFromParents();    // Clear from parent nodes (when reloading page)
         setFieldType("projectStatus", ColumnFieldTypes.PROJECTSTATUS);
-        setFieldType("projectRegistered", ColumnFieldTypes.PROJECTREGISTERED);
         setFieldType("barcodeSent", ColumnFieldTypes.BARCODESENT);
         setFieldType("dataProcessed", ColumnFieldTypes.DATAPROCESSED);
         setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
