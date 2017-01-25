@@ -28,6 +28,7 @@ public class ProjectOverviewModule extends VerticalLayout implements ProjectOver
         add("investigatorID");
         add("instrumentID");
         add("projectRegistered");
+        add("barcodeSent");
     }};
 
 

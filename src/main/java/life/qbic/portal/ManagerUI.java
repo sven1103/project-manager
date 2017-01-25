@@ -2,7 +2,6 @@ package life.qbic.portal;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.vaadin.addon.charts.model.ListSeries;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -11,7 +10,6 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.HorizontalLayout;
 
 import com.vaadin.ui.Notification;
 
@@ -32,7 +30,6 @@ import life.qbic.portal.projectsTimeLineChart.TimeLineChart;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChartPresenter;
 import life.qbic.portal.projectsTimeLineChart.TimeLineModel;
 import life.qbic.portal.projectsTimeLineChart.TimeLineStats;
-import org.apache.commons.collections.map.HashedMap;
 
 import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.database.WrongArgumentSettingsException;
@@ -40,15 +37,11 @@ import life.qbic.portal.projectFollowerModule.ProjectFollowerModel;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerView;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerViewImpl;
-import life.qbic.portal.projectOverviewModule.ProjectContentModel;
-import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
-import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.vaadin.sliderpanel.SliderPanel;
 import org.vaadin.sliderpanel.SliderPanelBuilder;
-import org.vaadin.sliderpanel.SliderPanelStyles;
 import org.vaadin.sliderpanel.client.SliderMode;
 import org.vaadin.sliderpanel.client.SliderTabPosition;
 
@@ -162,16 +155,32 @@ public class ManagerUI extends UI {
 
         final TimeLineChart timeLineChart = new TimeLineChart();
 
-        timeLineChart.setTitle("Test statistics");
+        timeLineChart.setTitle("Time since raw data arrived");
 
         final TimeLineStats timeLineModel = new TimeLineModel();
 
         final TimeLineChartPresenter timeLineChartPresenter = new TimeLineChartPresenter(timeLineModel, timeLineChart);
 
+        final NumberIndicator testNumberIndicator = new NumberIndicator();
+
+        final NumberIndicator overdueProjectsIndicator = new NumberIndicator();
+
+        testNumberIndicator.setHeader("Total projects");
+        testNumberIndicator.setNumber(8);
+
+        overdueProjectsIndicator.setHeader("Overdue projects");
+        overdueProjectsIndicator.setNumber(2);
+
+        final VerticalLayout numberIndicatorContainer = new VerticalLayout();
+        numberIndicatorContainer.setWidth(33, Unit.PERCENTAGE);
+        numberIndicatorContainer.setSpacing(true);
+
+        numberIndicatorContainer.addComponent(testNumberIndicator);
+        numberIndicatorContainer.addComponent(overdueProjectsIndicator);
+
+
         final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
                 projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
-
-
 
 
         projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
@@ -195,7 +204,13 @@ public class ManagerUI extends UI {
 
         sliderFrame.addComponent(sliderPanel);
         statisticsPanel.addComponent(pieChartStatusModule);
+        pieChartStatusModule.setStyleName("statsmodule");
+        timeLineChart.setStyleName("statsmodule");
         statisticsPanel.addComponent(timeLineChart);
+        statisticsPanel.addComponent(numberIndicatorContainer);
+        statisticsPanel.setWidth(100, Unit.PERCENTAGE);
+
+
         Responsive.makeResponsive(statisticsPanel);
 
         timeLineChart.setSizeUndefined();
@@ -207,6 +222,7 @@ public class ManagerUI extends UI {
         mainFrame.addComponent(mainContent);
 
         mainFrame.setExpandRatio(mainContent, 1);
+        mainFrame.setStyleName("mainpage");
         setContent(mainFrame);
     }
 

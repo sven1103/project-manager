@@ -13031,3 +13031,31 @@ div.v-layout.v-horizontal.v-widget {
 	background: #555;
 	color: #fff;
 }
+
+.mytheme .statsmodule {
+	overflow: hidden;
+	width: 30%;
+	min-width: 300px;
+	max-width: 500px;
+}
+
+.mytheme .mainpage {
+	margin: 0;
+	max-width: 1700px;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%, 0%);
+	background-color: white;
+}
+
+.mytheme .numberindicator-header {
+	text-align: center;
+	font-size: 18px;
+	line-height: 110%;
+}
+
+.mytheme .numberindicator-number {
+	text-align: center;
+	font-size: 48px;
+	color: #323232;
+}

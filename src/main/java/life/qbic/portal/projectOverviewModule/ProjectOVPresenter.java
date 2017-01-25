@@ -127,16 +127,12 @@ public class ProjectOVPresenter{
 
         ColumnFieldTypes.clearFromParents();    // Clear from parent nodes (when reloading page)
         setFieldType("projectStatus", ColumnFieldTypes.PROJECTSTATUS);
-        setFieldType("barcodeSent", ColumnFieldTypes.BARCODESENT);
         setFieldType("dataProcessed", ColumnFieldTypes.DATAPROCESSED);
         setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
         setFieldType("reportSent", ColumnFieldTypes.REPORTSENT);
         setFieldType("rawDataRegistered", ColumnFieldTypes.RAWDATAREGISTERED);
 
-        overViewModule.getOverviewGrid().getColumn("rawDataRegistered").
-                setRenderer(new DateRenderer(new SimpleDateFormat("yyyy-MM-dd")));
-        overViewModule.getOverviewGrid().getColumn("rawDataRegistered").setMaximumWidth(250d);
-        overViewModule.getOverviewGrid().getColumn("projectID").setMaximumWidth(120d);
+
 
         overViewModule.getOverviewGrid().setCellStyleGenerator(cellReference -> {
             if ("no".equals(cellReference.getValue())){
@@ -184,6 +180,17 @@ public class ProjectOVPresenter{
 
         final GridCellFilter filter = new GridCellFilter(overViewModule.getOverviewGrid());
         configureFilter(filter);
+
+        overViewModule.getOverviewGrid().getColumn("rawDataRegistered").
+                setRenderer(new DateRenderer(new SimpleDateFormat("yyyy-MM-dd")));
+        overViewModule.getOverviewGrid().getColumn("rawDataRegistered").setMaximumWidth(250d);
+        overViewModule.getOverviewGrid().getColumn("projectID").setMaximumWidth(120d);
+        overViewModule.getOverviewGrid().getColumn("offerID").setMaximumWidth(120d);
+        overViewModule.getOverviewGrid().getColumn("projectStatus").setMaximumWidth(140d);
+        overViewModule.getOverviewGrid().getColumn("dataProcessed").setMaximumWidth(140d);
+        overViewModule.getOverviewGrid().getColumn("dataAnalyzed").setMaximumWidth(140d);
+        overViewModule.getOverviewGrid().getColumn("reportSent").setMaximumWidth(140d);
+        overViewModule.getOverviewGrid().getColumn("invoice").setMaximumWidth(140d);
     }
 
     /**
@@ -218,7 +225,7 @@ public class ProjectOVPresenter{
      */
     private void initExtraHeaderRow(final Grid grid, final GridCellFilter filter){
         Grid.HeaderRow firstHeaderRow = grid.prependHeaderRow();
-        firstHeaderRow.join("projectID", "offerID", "projectStatus", "barcodeSent", "rawDataRegistered",
+        firstHeaderRow.join("projectID", "offerID", "projectStatus", "rawDataRegistered",
                 "dataProcessed", "dataAnalyzed", "reportSent", "invoice");
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setSpacing(true);
