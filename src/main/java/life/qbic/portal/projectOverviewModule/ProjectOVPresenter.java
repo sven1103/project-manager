@@ -17,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -182,9 +184,23 @@ public class ProjectOVPresenter{
 
 
         final GridCellFilter filter = new GridCellFilter(overViewModule.getOverviewGrid());
+        configureFilter(filter);
+    }
+
+    /**
+     * Configures the filter header in the grid
+     * @param filter
+     */
+    private void configureFilter(GridCellFilter filter) {
         initExtraHeaderRow(overViewModule.getOverviewGrid(), filter);
         filter.setTextFilter("projectID", true, true);
         filter.setDateFilter("rawDataRegistered", new SimpleDateFormat("yyyy-MM-dd"), true);
+        filter.setTextFilter("offerID", true, true);
+        final List<String> projectStatus = new ArrayList<>();
+        projectStatus.add("open");
+        projectStatus.add("in progress");
+        projectStatus.add("closed");
+        filter.setComboBoxFilter("projectStatus", projectStatus);
     }
 
     /**
