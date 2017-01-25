@@ -125,7 +125,6 @@ public class ProjectOVPresenter{
 
         ColumnFieldTypes.clearFromParents();    // Clear from parent nodes (when reloading page)
         setFieldType("projectStatus", ColumnFieldTypes.PROJECTSTATUS);
-        setFieldType("projectRegistered", ColumnFieldTypes.PROJECTREGISTERED);
         setFieldType("barcodeSent", ColumnFieldTypes.BARCODESENT);
         setFieldType("dataProcessed", ColumnFieldTypes.DATAPROCESSED);
         setFieldType("dataAnalyzed", ColumnFieldTypes.DATAANALYZED);
@@ -366,5 +365,9 @@ public class ProjectOVPresenter{
             pool.releaseConnection(conn);
         }
 
+    }
+
+    public Map<String, Integer> getTimeLineStats(){
+        return this.contentModel.getProjectesTimeLineStats();
     }
 }

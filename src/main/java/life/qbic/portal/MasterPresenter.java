@@ -5,6 +5,7 @@ import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
+import life.qbic.portal.projectsTimeLineChart.TimeLineChartPresenter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -25,6 +26,8 @@ public class MasterPresenter {
 
     private final ProjectFilter projectFilter;
 
+    private final TimeLineChartPresenter timeLineChartPresenter;
+
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
@@ -32,12 +35,14 @@ public class MasterPresenter {
                     ProjectOVPresenter projectOverviewPresenter,
                     ProjectSheetPresenter projectSheetPresenter,
                     ProjectFollowerPresenter projectFollowerPresenter,
-                    ProjectFilter projectFilter){
+                    ProjectFilter projectFilter,
+                    TimeLineChartPresenter timeLineChartPresenter){
         this.pieChartStatusModule = pieChartStatusModule;
         this.projectOverviewPresenter = projectOverviewPresenter;
         this.projectFollowerPresenter = projectFollowerPresenter;
         this.projectSheetPresenter = projectSheetPresenter;
         this.projectFilter = projectFilter;
+        this.timeLineChartPresenter = timeLineChartPresenter;
 
         init();
     }
@@ -65,8 +70,6 @@ public class MasterPresenter {
         projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
 
         projectSheetPresenter.getInformationCommittedFlag().addValueChangeListener(this::refreshModuleViews);
-      
-        projectFollowerPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
 
         projectFilter.createFilter("projectID", projectFollowerPresenter.getFollowingProjects());
 
@@ -76,7 +79,10 @@ public class MasterPresenter {
             if(!doesDBEntryExist){
                 projectOverviewPresenter.createNewProjectEntry(selectedProject);
             }
+            refreshModuleViews(event);
         });
+
+        timeLineChartPresenter.setCategories(projectOverviewPresenter.getTimeLineStats());
 
     }
 
@@ -84,6 +90,7 @@ public class MasterPresenter {
         makeFilter();
         projectOverviewPresenter.refreshView();
         projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
+        timeLineChartPresenter.updateData(projectOverviewPresenter.getTimeLineStats());
     }
 
     private void makeFilter(){
