@@ -161,23 +161,6 @@ public class ManagerUI extends UI {
 
         final TimeLineChartPresenter timeLineChartPresenter = new TimeLineChartPresenter(timeLineModel, timeLineChart);
 
-        final NumberIndicator testNumberIndicator = new NumberIndicator();
-
-        final NumberIndicator overdueProjectsIndicator = new NumberIndicator();
-
-        testNumberIndicator.setHeader("Total projects");
-        testNumberIndicator.setNumber(8);
-
-        overdueProjectsIndicator.setHeader("Overdue projects");
-        overdueProjectsIndicator.setNumber(2);
-
-        final VerticalLayout numberIndicatorContainer = new VerticalLayout();
-        numberIndicatorContainer.setWidth(33, Unit.PERCENTAGE);
-        numberIndicatorContainer.setSpacing(true);
-
-        numberIndicatorContainer.addComponent(testNumberIndicator);
-        numberIndicatorContainer.addComponent(overdueProjectsIndicator);
-
         //removed pieChartStatusModule #25
         final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
 
@@ -206,7 +189,8 @@ public class ManagerUI extends UI {
         //pieChartStatusModule.setStyleName("statsmodule");
         timeLineChart.setStyleName("statsmodule");
         statisticsPanel.addComponent(timeLineChart);
-        statisticsPanel.addComponent(numberIndicatorContainer);
+        //TODO: put ProjectsStats here later
+        //statisticsPanel.addComponent(numberIndicatorContainer);
         statisticsPanel.setWidth(100, Unit.PERCENTAGE);
 
 
