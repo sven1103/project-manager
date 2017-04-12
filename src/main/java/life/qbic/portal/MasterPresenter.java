@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MasterPresenter {
 
-    private final PieChartStatusModule pieChartStatusModule;
+    //private final PieChartStatusModule pieChartStatusModule;
 
     private final ProjectOVPresenter projectOverviewPresenter;
 
@@ -31,13 +31,13 @@ public class MasterPresenter {
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
-    MasterPresenter(PieChartStatusModule pieChartStatusModule,
-                    ProjectOVPresenter projectOverviewPresenter,
+    //removed PieChartStatusModule pieChartStatusModule #25
+    MasterPresenter(ProjectOVPresenter projectOverviewPresenter,
                     ProjectSheetPresenter projectSheetPresenter,
                     ProjectFollowerPresenter projectFollowerPresenter,
                     ProjectFilter projectFilter,
                     TimeLineChartPresenter timeLineChartPresenter){
-        this.pieChartStatusModule = pieChartStatusModule;
+        //this.pieChartStatusModule = pieChartStatusModule;
         this.projectOverviewPresenter = projectOverviewPresenter;
         this.projectFollowerPresenter = projectFollowerPresenter;
         this.projectSheetPresenter = projectSheetPresenter;
@@ -58,14 +58,14 @@ public class MasterPresenter {
             projectOverviewPresenter.sendError("Project Overview Module failed.", exp.getMessage());
         }
 
-        projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
+        //projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
 
         projectOverviewPresenter.getSelectedProject().addValueChangeListener( event ->
                 projectSheetPresenter.showInfoForProject(projectOverviewPresenter.getSelectedProjectItem()));
 
-        pieChartStatusModule.addPointClickListener(event -> {
-                    projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
-                });
+        //pieChartStatusModule.addPointClickListener(event -> {
+        //            projectOverviewPresenter.setFilter("projectStatus", pieChartStatusModule.getDataSeriesObject(event));
+        //        });
 
         projectOverviewPresenter.getIsChangedFlag().addValueChangeListener(this::refreshModuleViews);
 
@@ -89,12 +89,11 @@ public class MasterPresenter {
     private void refreshModuleViews(Property.ValueChangeEvent event){
         makeFilter();
         projectOverviewPresenter.refreshView();
-        projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
+        //projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
         timeLineChartPresenter.updateData(projectOverviewPresenter.getTimeLineStats());
     }
 
     private void makeFilter(){
         projectFilter.createFilter("projectID", projectFollowerPresenter.getFollowingProjects());
     }
-
 }
