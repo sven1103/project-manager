@@ -104,7 +104,7 @@ public class ManagerUI extends UI {
         final CssLayout projectDescriptionLayout = new CssLayout();
 
 
-        final Properties properties = getPropertiesFromFile("/etc/openbis_production.properties");
+        final Properties properties = getPropertiesFromFile("/Users/spaethju/Desktop/openbis_production.properties");
 
 
         final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("openbisuser"),
@@ -125,7 +125,7 @@ public class ManagerUI extends UI {
         }
 
         final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
-        followerPresenter.setUserID("zxmqp08").setSQLTableName("followingprojects").setPrimaryKey("id");
+        followerPresenter.setUserID("zxmqw74").setSQLTableName("followingprojects").setPrimaryKey("id");
 
         try{
             followerPresenter.startOrchestration();
@@ -141,7 +141,7 @@ public class ManagerUI extends UI {
 
         final ProjectContentModel model = new ProjectContentModel(projectDatabase, followerModel.getAllFollowingProjects());
 
-        final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
+        //final PieChartStatusModule pieChartStatusModule = new PieChartStatusModule();
 
         final ProjectOverviewModule projectOverviewModule = new ProjectOverviewModule();
 
@@ -178,9 +178,8 @@ public class ManagerUI extends UI {
         numberIndicatorContainer.addComponent(testNumberIndicator);
         numberIndicatorContainer.addComponent(overdueProjectsIndicator);
 
-
-        final MasterPresenter masterPresenter = new MasterPresenter(pieChartStatusModule,
-                projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
+        //removed pieChartStatusModule #25
+        final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
 
 
         projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
@@ -203,8 +202,8 @@ public class ManagerUI extends UI {
 
 
         sliderFrame.addComponent(sliderPanel);
-        statisticsPanel.addComponent(pieChartStatusModule);
-        pieChartStatusModule.setStyleName("statsmodule");
+        //statisticsPanel.addComponent(pieChartStatusModule);
+        //pieChartStatusModule.setStyleName("statsmodule");
         timeLineChart.setStyleName("statsmodule");
         statisticsPanel.addComponent(timeLineChart);
         statisticsPanel.addComponent(numberIndicatorContainer);
@@ -214,7 +213,7 @@ public class ManagerUI extends UI {
         Responsive.makeResponsive(statisticsPanel);
 
         timeLineChart.setSizeUndefined();
-        pieChartStatusModule.setSizeUndefined();
+        //pieChartStatusModule.setSizeUndefined();
 
         mainContent.addComponent(statisticsPanel);
         mainContent.addComponent(projectDescriptionLayout);

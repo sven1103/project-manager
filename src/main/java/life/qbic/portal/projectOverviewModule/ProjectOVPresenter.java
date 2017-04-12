@@ -132,8 +132,6 @@ public class ProjectOVPresenter{
         setFieldType("reportSent", ColumnFieldTypes.REPORTSENT);
         setFieldType("rawDataRegistered", ColumnFieldTypes.RAWDATAREGISTERED);
 
-
-
         overViewModule.getOverviewGrid().setCellStyleGenerator(cellReference -> {
             if ("no".equals(cellReference.getValue())){
                 return "v-grid-cell-no";
@@ -186,11 +184,14 @@ public class ProjectOVPresenter{
         overViewModule.getOverviewGrid().getColumn("rawDataRegistered").setMaximumWidth(250d);
         overViewModule.getOverviewGrid().getColumn("projectID").setMaximumWidth(120d);
         overViewModule.getOverviewGrid().getColumn("offerID").setMaximumWidth(120d);
-        overViewModule.getOverviewGrid().getColumn("projectStatus").setMaximumWidth(140d);
+        //overViewModule.getOverviewGrid().getColumn("projectStatus").setMaximumWidth(140d);
         overViewModule.getOverviewGrid().getColumn("dataProcessed").setMaximumWidth(140d);
         overViewModule.getOverviewGrid().getColumn("dataAnalyzed").setMaximumWidth(140d);
         overViewModule.getOverviewGrid().getColumn("reportSent").setMaximumWidth(140d);
         overViewModule.getOverviewGrid().getColumn("invoice").setMaximumWidth(140d);
+
+        // removes project status column #25
+        overViewModule.getOverviewGrid().removeColumn("projectStatus");
     }
 
     /**
@@ -202,11 +203,11 @@ public class ProjectOVPresenter{
         filter.setTextFilter("projectID", true, true);
         filter.setDateFilter("rawDataRegistered", new SimpleDateFormat("yyyy-MM-dd"), true);
         filter.setTextFilter("offerID", true, true);
-        final List<String> projectStatus = new ArrayList<>();
-        projectStatus.add("open");
-        projectStatus.add("in progress");
-        projectStatus.add("closed");
-        filter.setComboBoxFilter("projectStatus", projectStatus);
+        //final List<String> projectStatus = new ArrayList<>();
+        //projectStatus.add("open");
+        //projectStatus.add("in progress");
+        //projectStatus.add("closed");
+        //filter.setComboBoxFilter("projectStatus", projectStatus);
         final List<String> generalStatus = new ArrayList<>();
         generalStatus.add("no");
         generalStatus.add("in progress");
@@ -225,7 +226,8 @@ public class ProjectOVPresenter{
      */
     private void initExtraHeaderRow(final Grid grid, final GridCellFilter filter){
         Grid.HeaderRow firstHeaderRow = grid.prependHeaderRow();
-        firstHeaderRow.join("projectID", "offerID", "projectStatus", "rawDataRegistered",
+        // "projectStatus removed (#25)
+        firstHeaderRow.join("projectID", "offerID", "rawDataRegistered",
                 "dataProcessed", "dataAnalyzed", "reportSent", "invoice");
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setSpacing(true);
@@ -257,7 +259,7 @@ public class ProjectOVPresenter{
     public void setFilter(String column, String filter){
         Container.Filter tmpFilter = new Like(column, filter);
         if(!contentModel.getTableContent().getContainerFilters().contains(tmpFilter)){
-            contentModel.getTableContent().removeContainerFilters("projectStatus");
+            //contentModel.getTableContent().removeContainerFilters("projectStatus");
             contentModel.getTableContent().addContainerFilter(new Like(column, filter));
         } else{
             contentModel.getTableContent().removeContainerFilter(tmpFilter);
