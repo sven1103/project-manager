@@ -26,6 +26,9 @@ import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
 import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetView;
 import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsModel;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsView;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsViewImpl;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChart;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChartPresenter;
 import life.qbic.portal.projectsTimeLineChart.TimeLineModel;
@@ -189,8 +192,8 @@ public class ManagerUI extends UI {
         //pieChartStatusModule.setStyleName("statsmodule");
         timeLineChart.setStyleName("statsmodule");
         statisticsPanel.addComponent(timeLineChart);
-        //TODO: put ProjectsStats here later
-        //statisticsPanel.addComponent(numberIndicatorContainer);
+        //TODO: How to show Modules?git
+        //statisticsPanel.addComponent(projectsStatsView.getProjectStats());
         statisticsPanel.setWidth(100, Unit.PERCENTAGE);
 
 
