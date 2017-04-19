@@ -27,6 +27,7 @@ import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetView;
 import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
 import life.qbic.portal.projectsStatsModule.ProjectsStatsModel;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsPresenter;
 import life.qbic.portal.projectsStatsModule.ProjectsStatsView;
 import life.qbic.portal.projectsStatsModule.ProjectsStatsViewImpl;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChart;
@@ -164,6 +165,22 @@ public class ManagerUI extends UI {
 
         final TimeLineChartPresenter timeLineChartPresenter = new TimeLineChartPresenter(timeLineModel, timeLineChart);
 
+        final ProjectsStatsView projectsStatsView = new ProjectsStatsViewImpl();
+
+        //Init project stats
+        final ProjectsStatsModel projectsStatsModel = new ProjectsStatsModel(projectDatabase);
+        final ProjectsStatsPresenter projectsStatsPresenter = new ProjectsStatsPresenter(projectsStatsModel, projectsStatsView, openBisConnection);
+        projectsStatsPresenter.setUserID("zxmqw74");
+        projectsStatsPresenter.setSqlTableName("followingprojects");
+        projectsStatsPresenter.setPrimaryKey("id");
+        try {
+            projectsStatsPresenter.init();
+        } catch (SQLException e) {
+            Notification.show("No Projects found");
+        } catch (WrongArgumentSettingsException e) {
+            Notification.show("No Projects found");
+        }
+
         //removed pieChartStatusModule #25
         final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
 
@@ -192,9 +209,8 @@ public class ManagerUI extends UI {
         //pieChartStatusModule.setStyleName("statsmodule");
         timeLineChart.setStyleName("statsmodule");
         statisticsPanel.addComponent(timeLineChart);
-        //TODO: How to show Modules?git
-        //statisticsPanel.addComponent(projectsStatsView.getProjectStats());
         statisticsPanel.setWidth(100, Unit.PERCENTAGE);
+        statisticsPanel.addComponent(projectsStatsView.getProjectStats());
 
 
         Responsive.makeResponsive(statisticsPanel);

@@ -25,6 +25,12 @@ public class ProjectContentModel{
 
     private String primaryKey = "projectID";
 
+    private double projectsWithClosedStatus;
+
+    private double projectsWithInProgressStatus;
+
+    private double projectsWithOpenStatus;
+
     private SQLContainer tableContent;
 
     private final ProjectDatabaseConnector projectDatabaseConnector;
@@ -64,9 +70,7 @@ public class ProjectContentModel{
      * the projects status 'open', 'in progress', 'closed'
      */
     private void querryKeyFigures() throws SQLException, WrongArgumentSettingsException {
-        double projectsWithOpenStatus;
-        double projectsWithClosedStatus;
-        double projectsWithInProgressStatus;
+
         HashMap<String, Double> keyFigures = new HashMap<>();
 
         projectsWithOpenStatus = (double) projectDatabaseConnector.makeFreeFormQuery(QuerryType.PROJECTSTATUS_OPEN, queryArguments, primaryKey, followingProjects).getCount();
@@ -163,5 +167,6 @@ public class ProjectContentModel{
                 container.put("> 12 weeks", container.get("> 12 weeks")+1);
         }
     }
+
 
 }

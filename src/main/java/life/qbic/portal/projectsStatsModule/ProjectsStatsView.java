@@ -1,7 +1,6 @@
 package life.qbic.portal.projectsStatsModule;
 
 import com.vaadin.ui.VerticalLayout;
-import life.qbic.portal.NumberIndicator;
 
 /**
  * Created by spaethju on 12.04.17.
@@ -9,5 +8,7 @@ import life.qbic.portal.NumberIndicator;
 public interface ProjectsStatsView {
 
     VerticalLayout getProjectStats();
+    void setNumberOfTotalProjects(double number);
+    void setNumberOfOverdueProjects(double number);
 
 }

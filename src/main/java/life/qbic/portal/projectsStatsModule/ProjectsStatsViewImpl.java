@@ -34,4 +34,14 @@ public class ProjectsStatsViewImpl implements ProjectsStatsView{
     public VerticalLayout getProjectStats() {
         return this.projectStatsLayout;
     }
+
+    @Override
+    public void setNumberOfTotalProjects(double number) {
+        totalProjectsNI.setNumber((int) number);
+    }
+
+    @Override
+    public void setNumberOfOverdueProjects(double number) {
+        overdueProjectsNI.setNumber((int) number);
+    }
 }
