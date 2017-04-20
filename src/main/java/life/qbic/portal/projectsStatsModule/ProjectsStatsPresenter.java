@@ -7,8 +7,6 @@ import life.qbic.portal.database.WrongArgumentSettingsException;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-
 
 /**
  * Created by spaethju on 12.04.17.
@@ -20,11 +18,9 @@ public class ProjectsStatsPresenter {
     private String sqlTableName;
     private String userID;
     private String primaryKey;
-    private Map<String, List<String>> spaceProjectMap;
     private List<String> followingProjects;
-    private String currentProject;
+    private Integer overdueProjects;
     private OpenBisConnection connection;
-    private BeanItemContainer<ProjectBean> projects;
 
     public ProjectsStatsPresenter(ProjectsStatsModel model, ProjectsStatsView view, OpenBisConnection connection) {
         this.model = model;
@@ -33,19 +29,16 @@ public class ProjectsStatsPresenter {
     }
 
     public void init() throws SQLException, WrongArgumentSettingsException {
-        followingProjects = model.loadFollowingProjects(sqlTableName, userID, primaryKey);
+        followingProjects = model.loadFollowingProjects(userID, primaryKey);
+        overdueProjects = model.getNumberOfOverdueProjects(userID);
         view.setNumberOfTotalProjects(followingProjects.size());
+        view.setNumberOfOverdueProjects(overdueProjects);
 
 
     }
 
     private void refreshProjects() throws SQLException, WrongArgumentSettingsException {
-        this.followingProjects = model.loadFollowingProjects(sqlTableName, userID, primaryKey);
-    }
-
-
-    public void setSqlTableName(String sqlTableName) {
-        this.sqlTableName = sqlTableName;
+        this.followingProjects = model.loadFollowingProjects(userID, primaryKey);
     }
 
     public void setUserID(String userID) {

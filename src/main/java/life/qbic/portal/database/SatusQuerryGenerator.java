@@ -18,6 +18,7 @@ public class SatusQuerryGenerator {
         querryMap.put(QuerryType.PROJECTSTATUS_OPEN, "SELECT * FROM %s WHERE projectStatus=\'open\'");
         querryMap.put(QuerryType.PROJECTSTATUS_INPROGRESS, "SELECT * FROM %s WHERE projectStatus=\'in progress\'");
         querryMap.put(QuerryType.PROJECTSTATUS_CLOSED, "SELECT * FROM %s WHERE projectStatus=\'closed\'");
+        querryMap.put(QuerryType.PROJECT_REGISTERED_RAWDATA, "SELECT * FROM %s WHERE rawDataRegistered < NOW() - INTERVAL 12 WEEK");
         followingProjectMap.put(QuerryType.GET_FOLLOWING_PROJECTS, "SELECT * FROM %s WHERE user_id=\'%s\'");
         followingProjectMap.put(QuerryType.FOLLOW_PROJECT, "INSERT INTO %s(user_id, project_id) VALUES (\'%s\', \'%s\');");
         followingProjectMap.put(QuerryType.UNFOLLOW_PROJECT, "DELETE FROM %s WHERE user_id=\'%s\' AND project_id=\'%s\' ;");

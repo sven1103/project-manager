@@ -171,7 +171,6 @@ public class ManagerUI extends UI {
         final ProjectsStatsModel projectsStatsModel = new ProjectsStatsModel(projectDatabase);
         final ProjectsStatsPresenter projectsStatsPresenter = new ProjectsStatsPresenter(projectsStatsModel, projectsStatsView, openBisConnection);
         projectsStatsPresenter.setUserID("zxmqw74");
-        projectsStatsPresenter.setSqlTableName("followingprojects");
         projectsStatsPresenter.setPrimaryKey("id");
         try {
             projectsStatsPresenter.init();
