@@ -1,15 +1,11 @@
 package life.qbic.portal.projectsStatsModule;
 
-import com.vaadin.data.util.BeanItemContainer;
 import life.qbic.portal.OpenBisConnection;
-import life.qbic.portal.beans.ProjectBean;
 import life.qbic.portal.database.WrongArgumentSettingsException;
 import org.apache.commons.logging.Log;
-import sun.nio.ch.Util;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by spaethju on 12.04.17.

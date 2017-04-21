@@ -1,12 +1,15 @@
 package life.qbic.portal.projectsStatsModule;
 
 import com.vaadin.data.util.sqlcontainer.query.FreeformQuery;
-import life.qbic.portal.database.*;
-import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
+import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.database.QuerryType;
+import life.qbic.portal.database.WrongArgumentSettingsException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by spaethju on 12.04.17.

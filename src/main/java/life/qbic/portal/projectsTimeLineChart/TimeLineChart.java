@@ -17,8 +17,6 @@ public class TimeLineChart extends Chart {
 
     private final YAxis yAxis;
 
-    private List<Series> statsSeries;
-
     private PlotOptionsColumn plotOptions;
 
     public TimeLineChart(){
