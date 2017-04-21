@@ -20,12 +20,17 @@ import life.qbic.openbis.openbisclient.OpenBisClient;
 import life.qbic.portal.database.ProjectDatabase;
 
 import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.liferayandvaadinhelpers.main.LiferayAndVaadinUtils;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
 import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetView;
 import life.qbic.portal.projectSheetModule.ProjectSheetViewImplementation;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsModel;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsPresenter;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsView;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsViewImpl;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChart;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChartPresenter;
 import life.qbic.portal.projectsTimeLineChart.TimeLineModel;
@@ -124,8 +129,17 @@ public class ManagerUI extends UI {
             Notification.show("Could not connect to openBis!");
         }
 
+        //set userID here:
+        final String userID;
+        if (LiferayAndVaadinUtils.isLiferayPortlet()) {
+            userID = LiferayAndVaadinUtils.getUser().getScreenName();
+        } else {
+            userID = "zxmqw74";
+        }
+
+
         final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
-        followerPresenter.setUserID("zxmqw74").setSQLTableName("followingprojects").setPrimaryKey("id");
+        followerPresenter.setUserID(userID).setSQLTableName("followingprojects").setPrimaryKey("id");
 
         try{
             followerPresenter.startOrchestration();
@@ -161,25 +175,20 @@ public class ManagerUI extends UI {
 
         final TimeLineChartPresenter timeLineChartPresenter = new TimeLineChartPresenter(timeLineModel, timeLineChart);
 
-        final NumberIndicator testNumberIndicator = new NumberIndicator();
+        final ProjectsStatsView projectsStatsView = new ProjectsStatsViewImpl();
 
-        final NumberIndicator overdueProjectsIndicator = new NumberIndicator();
+        //Init project stats
+        final ProjectsStatsModel projectsStatsModel = new ProjectsStatsModel(projectDatabase);
+        final ProjectsStatsPresenter projectsStatsPresenter = new ProjectsStatsPresenter(projectsStatsModel, projectsStatsView, openBisConnection, log);
+        projectsStatsPresenter.setUserID(userID);
+        projectsStatsPresenter.setFollowingprojects("followingprojects");
+        projectsStatsPresenter.setProjectsoverview("projectsoverview");
+        projectsStatsPresenter.setPrimaryKey("id");
+        projectsStatsPresenter.update();
 
-        testNumberIndicator.setHeader("Total projects");
-        testNumberIndicator.setNumber(8);
-
-        overdueProjectsIndicator.setHeader("Overdue projects");
-        overdueProjectsIndicator.setNumber(2);
-
-        final VerticalLayout numberIndicatorContainer = new VerticalLayout();
-        numberIndicatorContainer.setWidth(33, Unit.PERCENTAGE);
-        numberIndicatorContainer.setSpacing(true);
-
-        numberIndicatorContainer.addComponent(testNumberIndicator);
-        numberIndicatorContainer.addComponent(overdueProjectsIndicator);
 
         //removed pieChartStatusModule #25
-        final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
+        final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter, projectsStatsPresenter);
 
 
         projectOverviewModule.setWidth(100, Unit.PERCENTAGE);
@@ -206,8 +215,8 @@ public class ManagerUI extends UI {
         //pieChartStatusModule.setStyleName("statsmodule");
         timeLineChart.setStyleName("statsmodule");
         statisticsPanel.addComponent(timeLineChart);
-        statisticsPanel.addComponent(numberIndicatorContainer);
         statisticsPanel.setWidth(100, Unit.PERCENTAGE);
+        statisticsPanel.addComponent(projectsStatsView.getProjectStats());
 
 
         Responsive.makeResponsive(statisticsPanel);

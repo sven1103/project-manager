@@ -101,8 +101,4 @@ public class ProjectDatabase implements ProjectDatabaseConnector {
         tableContent.setAutoCommit(true);
         return tableContent;
     }
-
-
-
-
 }

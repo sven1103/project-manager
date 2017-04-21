@@ -5,6 +5,7 @@ import life.qbic.portal.database.ProjectFilter;
 import life.qbic.portal.projectFollowerModule.ProjectFollowerPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectSheetModule.ProjectSheetPresenter;
+import life.qbic.portal.projectsStatsModule.ProjectsStatsPresenter;
 import life.qbic.portal.projectsTimeLineChart.TimeLineChartPresenter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +29,8 @@ public class MasterPresenter {
 
     private final TimeLineChartPresenter timeLineChartPresenter;
 
+    private final ProjectsStatsPresenter projectsStatsPresenter;
+
     private final static Log log =
             LogFactory.getLog(ManagerUI.class.getName());
 
@@ -36,13 +39,14 @@ public class MasterPresenter {
                     ProjectSheetPresenter projectSheetPresenter,
                     ProjectFollowerPresenter projectFollowerPresenter,
                     ProjectFilter projectFilter,
-                    TimeLineChartPresenter timeLineChartPresenter){
+                    TimeLineChartPresenter timeLineChartPresenter, ProjectsStatsPresenter projectsStatsPresenter){
         //this.pieChartStatusModule = pieChartStatusModule;
         this.projectOverviewPresenter = projectOverviewPresenter;
         this.projectFollowerPresenter = projectFollowerPresenter;
         this.projectSheetPresenter = projectSheetPresenter;
         this.projectFilter = projectFilter;
         this.timeLineChartPresenter = timeLineChartPresenter;
+        this.projectsStatsPresenter = projectsStatsPresenter;
 
         init();
     }
@@ -91,6 +95,7 @@ public class MasterPresenter {
         projectOverviewPresenter.refreshView();
         //projectOverviewPresenter.getStatusKeyFigures().forEach(pieChartStatusModule::update);
         timeLineChartPresenter.updateData(projectOverviewPresenter.getTimeLineStats());
+        projectsStatsPresenter.update();
     }
 
     private void makeFilter(){
