@@ -2,7 +2,7 @@ package life.qbic.portal.projectsTimeLineChart;
 
 import com.vaadin.addon.charts.Chart;
 import com.vaadin.addon.charts.model.*;
-
+import com.vaadin.addon.charts.model.style.SolidColor;
 import java.util.List;
 
 
@@ -25,8 +25,11 @@ public class TimeLineChart extends Chart {
         super(ChartType.COLUMN);
         configuration = this.getConfiguration();
         plotOptions = new PlotOptionsColumn();
+        plotOptions.setColorByPoint(true);
+        plotOptions.setColors(new SolidColor("#197DE1"), new SolidColor("#197DE1"), new SolidColor("#197DE1"), new SolidColor("#ed473b"));
         xAxis = new XAxis();
         yAxis = new YAxis();
+        yAxis.setAllowDecimals(false);
 
         plotOptions.setAnimation(false);
         configuration.addPlotOptions(plotOptions);
