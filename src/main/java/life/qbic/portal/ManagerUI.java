@@ -20,6 +20,7 @@ import life.qbic.openbis.openbisclient.OpenBisClient;
 import life.qbic.portal.database.ProjectDatabase;
 
 import life.qbic.portal.database.ProjectDatabaseConnector;
+import life.qbic.portal.liferayandvaadinhelpers.main.LiferayAndVaadinUtils;
 import life.qbic.portal.projectOverviewModule.ProjectContentModel;
 import life.qbic.portal.projectOverviewModule.ProjectOVPresenter;
 import life.qbic.portal.projectOverviewModule.ProjectOverviewModule;
@@ -128,8 +129,17 @@ public class ManagerUI extends UI {
             Notification.show("Could not connect to openBis!");
         }
 
+        //set userID here:
+        final String userID;
+        if (LiferayAndVaadinUtils.isLiferayPortlet()) {
+            userID = LiferayAndVaadinUtils.getUser().getScreenName();
+        } else {
+            userID = "zxmqw74";
+        }
+
+
         final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
-        followerPresenter.setUserID("zxmqw74").setSQLTableName("followingprojects").setPrimaryKey("id");
+        followerPresenter.setUserID(userID).setSQLTableName("followingprojects").setPrimaryKey("id");
 
         try{
             followerPresenter.startOrchestration();
@@ -169,19 +179,16 @@ public class ManagerUI extends UI {
 
         //Init project stats
         final ProjectsStatsModel projectsStatsModel = new ProjectsStatsModel(projectDatabase);
-        final ProjectsStatsPresenter projectsStatsPresenter = new ProjectsStatsPresenter(projectsStatsModel, projectsStatsView, openBisConnection);
-        projectsStatsPresenter.setUserID("zxmqw74");
+        final ProjectsStatsPresenter projectsStatsPresenter = new ProjectsStatsPresenter(projectsStatsModel, projectsStatsView, openBisConnection, log);
+        projectsStatsPresenter.setUserID(userID);
+        projectsStatsPresenter.setFollowingprojects("followingprojects");
+        projectsStatsPresenter.setProjectsoverview("projectsoverview");
         projectsStatsPresenter.setPrimaryKey("id");
-        try {
-            projectsStatsPresenter.init();
-        } catch (SQLException e) {
-            Notification.show("No Projects found");
-        } catch (WrongArgumentSettingsException e) {
-            Notification.show("No Projects found");
-        }
+        projectsStatsPresenter.update();
+
 
         //removed pieChartStatusModule #25
-        final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter);
+        final MasterPresenter masterPresenter = new MasterPresenter(projectOVPresenter, projectSheetPresenter, followerPresenter, projectFilter, timeLineChartPresenter, projectsStatsPresenter);
 
 
         projectOverviewModule.setWidth(100, Unit.PERCENTAGE);

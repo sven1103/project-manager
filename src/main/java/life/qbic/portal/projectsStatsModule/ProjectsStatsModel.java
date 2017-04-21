@@ -21,7 +21,7 @@ public class ProjectsStatsModel {
         this.projectDatabase = projectDatabase;
     }
 
-    public List loadFollowingProjects(String userID, String primaryKey)
+    public List loadFollowingProjects(String userID, String table, String primaryKey)
             throws SQLException, WrongArgumentSettingsException {
 
         projectDatabase.connectToDatabase();
@@ -29,7 +29,7 @@ public class ProjectsStatsModel {
         followingProjects.clear();
 
         HashMap<String, String> querySettings = new HashMap<>();
-        querySettings.put("table", "followingprojects");
+        querySettings.put("table", table);
         querySettings.put("user_id", userID);
 
         FreeformQuery query = projectDatabase.makeFreeFormQuery(QuerryType.GET_FOLLOWING_PROJECTS,
@@ -54,12 +54,12 @@ public class ProjectsStatsModel {
      *
      * @return A map containing values for different categories
      */
-    public Integer getNumberOfOverdueProjects(String userID) throws SQLException, WrongArgumentSettingsException {
+    public Integer getNumberOfOverdueProjects(String userID, String table) throws SQLException, WrongArgumentSettingsException {
 
         projectDatabase.connectToDatabase();
 
         HashMap<String, String> querySettings = new HashMap<>();
-        querySettings.put("table", "projectsoverview");
+        querySettings.put("table", table);
         querySettings.put("user_id", userID);
 
         overdueProjects = projectDatabase.makeFreeFormQuery(QuerryType.PROJECT_REGISTERED_RAWDATA,
