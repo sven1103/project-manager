@@ -73,7 +73,12 @@ public class ManagerUI extends UI {
 
         log.info("Started project-manager.");
 
-        properties = getPropertiesFromFile("/Users/spaethju/Desktop/openbis_production.properties");
+        if (LiferayAndVaadinUtils.isLiferayPortlet()) {
+            properties = getPropertiesFromFile("${liferay.home}/qbic-ext.properties");
+        } else {
+            System.err.println("Missing property file.");
+        }
+
 
         Map<String, String> credentials = getCredentialsFromEnvVariables();
 
