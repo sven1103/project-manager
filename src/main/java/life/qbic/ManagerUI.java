@@ -121,7 +121,6 @@ public class ManagerUI extends UI {
         }
 
         //set userID here:
-        userID = "zxmqw74";
         if (LiferayAndVaadinUtils.isLiferayPortlet()) {
             userID = LiferayAndVaadinUtils.getUser().getScreenName();
           }
@@ -248,8 +247,8 @@ public class ManagerUI extends UI {
 
     private Map<String, String> getCredentialsFromEnvVariables() {
         final Map<String, String> credentials = new HashMap<>();
-        credentials.put("sqluser", properties.getProperty("sqluser"));
-        credentials.put("sqlpassword", properties.getProperty("sqlpassword"));
+        credentials.put("sqluser", properties.getProperty("mysql.user"));
+        credentials.put("sqlpassword", properties.getProperty("mysql.pass"));
 
         if (credentials.get("sqluser") != null && credentials.get("sqlpassword") != null) {
             return credentials;
