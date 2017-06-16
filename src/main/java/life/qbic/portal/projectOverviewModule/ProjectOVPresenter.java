@@ -161,7 +161,7 @@ public class ProjectOVPresenter{
             @Override
             public String convertToPresentation(String project, Class<? extends String> aClass, Locale locale) throws ConversionException {
                 String space = openBisConnection.getSpaceOfProject(project);
-                return String.format("<a href='%s/%s/%s' target='_blank'>%s</a>", portalURL, space, project, project);
+                return String.format("<a href='%s/%s/%s' target='_blank' style='color:black'>%s</a>", portalURL, space, project, project);
             }
 
             @Override
