@@ -12,6 +12,7 @@ import life.qbic.database.ProjectDatabaseConnector;
 import life.qbic.database.ProjectFilter;
 import life.qbic.database.WrongArgumentSettingsException;
 import life.qbic.openbis.openbisclient.OpenBisClient;
+import life.qbic.portal.liferayandvaadinhelpers.main.LiferayAndVaadinUtils;
 import life.qbic.projectFollowerModule.ProjectFollowerModel;
 import life.qbic.projectFollowerModule.ProjectFollowerPresenter;
 import life.qbic.projectFollowerModule.ProjectFollowerView;
@@ -59,6 +60,7 @@ import com.vaadin.server.WrappedPortletSession;
 public class ManagerUI extends UI {
 
 
+    private String userID;
     private Properties properties;
     /**
      * Get static logger instance
@@ -119,12 +121,10 @@ public class ManagerUI extends UI {
         }
 
         //set userID here:
-        final String userID;
-//        if (LiferayAndVaadinUtils.isLiferayPortlet()) {
-//            userID = LiferayAndVaadinUtils.getUser().getScreenName();
-//        } else {
         userID = "zxmqw74";
-//        }
+        if (LiferayAndVaadinUtils.isLiferayPortlet()) {
+            userID = LiferayAndVaadinUtils.getUser().getScreenName();
+          }
 
 
         final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
