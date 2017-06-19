@@ -12,6 +12,8 @@ import life.qbic.database.ProjectDatabaseConnector;
 import life.qbic.database.ProjectFilter;
 import life.qbic.database.WrongArgumentSettingsException;
 import life.qbic.openbis.openbisclient.OpenBisClient;
+import life.qbic.portal.liferayandvaadinhelpers.main.ConfigurationManager;
+import life.qbic.portal.liferayandvaadinhelpers.main.ConfigurationManagerFactory;
 import life.qbic.portal.liferayandvaadinhelpers.main.LiferayAndVaadinUtils;
 import life.qbic.projectFollowerModule.ProjectFollowerModel;
 import life.qbic.projectFollowerModule.ProjectFollowerPresenter;
@@ -62,6 +64,9 @@ public class ManagerUI extends UI {
 
     private String userID;
     private Properties properties;
+    private ConfigurationManager config;
+    private OpenBisClient openBisClient;
+
     /**
      * Get static logger instance
      */
@@ -74,18 +79,12 @@ public class ManagerUI extends UI {
         log.info("Started project-manager.");
 
         if (LiferayAndVaadinUtils.isLiferayPortlet()) {
-            properties = getPropertiesFromFile("/home/luser/liferay-portal-6.2-ce-ga4/qbic-ext.properties");
-        } else {
-            System.err.println("Missing property file.");
+            String userID = LiferayAndVaadinUtils.getUser().getScreenName();
         }
-
-
+        config = ConfigurationManagerFactory.getInstance();
 
         Map<String, String> credentials = getCredentialsFromPropertiesFile();
 
-        if (credentials == null) {
-            System.err.println("Database login credentials missing from environment");
-        }
 
         final VerticalLayout mainFrame = new VerticalLayout();
 
@@ -107,10 +106,16 @@ public class ManagerUI extends UI {
         }
 
 
+
         final CssLayout projectDescriptionLayout = new CssLayout();
 
-        final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("datasource.url"),
-                properties.getProperty("datasource.user"), properties.getProperty("datasource.password"));
+        try {
+            openBisClient = new OpenBisClient(config.getDataSourceUser(), config.getDataSourcePassword(), config.getDataSourceUrl());
+            openBisClient.login();
+            Utils.notification("Connectection established", "", "success");
+        } catch (Exception e) {
+            System.err.println("Error while connecting to openbis");
+        }
 
 
         final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
