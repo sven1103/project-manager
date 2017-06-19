@@ -96,8 +96,8 @@ public class ManagerUI extends UI {
 
         final CssLayout statisticsPanel = new CssLayout();
 
-        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(properties.getProperty("sqluser"),
-                properties.getProperty("sqlpassword"), projectFilter);
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(properties.getProperty("mysql.user"),
+                properties.getProperty("mysql.pass"), projectFilter);
 
         try {
             projectDatabase.connectToDatabase();
