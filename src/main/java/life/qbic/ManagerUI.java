@@ -80,11 +80,12 @@ public class ManagerUI extends UI {
         }
 
 
-        //Map<String, String> credentials = getCredentialsFromEnvVariables();
 
-        //if (credentials == null) {
-        //    System.err.println("Database login credentials missing from environment");
-        //}
+        Map<String, String> credentials = getCredentialsFromPropertiesFile();
+
+        if (credentials == null) {
+            System.err.println("Database login credentials missing from environment");
+        }
 
         final VerticalLayout mainFrame = new VerticalLayout();
 
@@ -96,8 +97,8 @@ public class ManagerUI extends UI {
 
         final CssLayout statisticsPanel = new CssLayout();
 
-        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(properties.getProperty("mysql.user"),
-                properties.getProperty("mysql.pass"), projectFilter);
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
+                credentials.get("sqlpassword"), projectFilter);
 
         try {
             projectDatabase.connectToDatabase();
@@ -108,8 +109,8 @@ public class ManagerUI extends UI {
 
         final CssLayout projectDescriptionLayout = new CssLayout();
 
-        final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("openbisuser"),
-                properties.getProperty("openbispw"), properties.getProperty("openbisURI"));
+        final OpenBisClient openBisClient = new OpenBisClient(properties.getProperty("datasource.url"),
+                properties.getProperty("datasource.user"), properties.getProperty("datasource.password"));
 
 
         final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
@@ -250,7 +251,7 @@ public class ManagerUI extends UI {
         return result;
     }
 
-    private Map<String, String> getCredentialsFromEnvVariables() {
+    private Map<String, String> getCredentialsFromPropertiesFile() {
         final Map<String, String> credentials = new HashMap<>();
         credentials.put("sqluser", properties.getProperty("mysql.user"));
         credentials.put("sqlpassword", properties.getProperty("mysql.pass"));
