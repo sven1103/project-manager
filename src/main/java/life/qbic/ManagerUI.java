@@ -64,9 +64,6 @@ public class ManagerUI extends UI {
 
     private String userID;
     private Properties properties;
-    private ConfigurationManager config;
-    private OpenBisClient openBisClient;
-
     /**
      * Get static logger instance
      */
@@ -78,13 +75,16 @@ public class ManagerUI extends UI {
 
         log.info("Started project-manager.");
 
+        //set userID here:
         if (LiferayAndVaadinUtils.isLiferayPortlet()) {
-            String userID = LiferayAndVaadinUtils.getUser().getScreenName();
+           userID = LiferayAndVaadinUtils.getUser().getScreenName();
         }
-        config = ConfigurationManagerFactory.getInstance();
 
-        Map<String, String> credentials = getCredentialsFromPropertiesFile();
+        Map<String, String> credentials = getCredentialsFromEnvVariables();
 
+        if (credentials == null) {
+            System.err.println("Database login credentials missing from environment");
+        }
 
         final VerticalLayout mainFrame = new VerticalLayout();
 
@@ -96,8 +96,9 @@ public class ManagerUI extends UI {
 
         final CssLayout statisticsPanel = new CssLayout();
 
-        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
-                credentials.get("sqlpassword"), projectFilter);
+        ConfigurationManager config = new ConfigurationManagerFactory().getInstance();
+
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(config.getMysqlUser(), config.getMysqlPass(), projectFilter);
 
         try {
             projectDatabase.connectToDatabase();
@@ -106,16 +107,10 @@ public class ManagerUI extends UI {
         }
 
 
-
         final CssLayout projectDescriptionLayout = new CssLayout();
-
-        try {
-            openBisClient = new OpenBisClient(config.getDataSourceUser(), config.getDataSourcePassword(), config.getDataSourceUrl());
-            openBisClient.login();
-            Utils.notification("Connectection established", "", "success");
-        } catch (Exception e) {
-            System.err.println("Error while connecting to openbis");
-        }
+        Utils.notification("Hello", config.getDataSourceUser() + config.getDataSourcePassword() + config.getDataSourceUrl(), "success");
+        final OpenBisClient openBisClient = new OpenBisClient(config.getDataSourceUser(),
+                config.getDataSourcePassword(), config.getDataSourceUrl());
 
 
         final ProjectFollowerModel followerModel = new ProjectFollowerModel(projectDatabase);
@@ -130,12 +125,6 @@ public class ManagerUI extends UI {
         if (!openBisConnection.initConnection(openBisClient)) {
             Notification.show("Could not connect to openBis!");
         }
-
-        //set userID here:
-        if (LiferayAndVaadinUtils.isLiferayPortlet()) {
-            userID = LiferayAndVaadinUtils.getUser().getScreenName();
-          }
-
 
         final ProjectFollowerPresenter followerPresenter = new ProjectFollowerPresenter(followerView, followerModel, openBisConnection);
         followerPresenter.setUserID(userID).setSQLTableName("followingprojects").setPrimaryKey("id");
@@ -256,7 +245,7 @@ public class ManagerUI extends UI {
         return result;
     }
 
-    private Map<String, String> getCredentialsFromPropertiesFile() {
+    private Map<String, String> getCredentialsFromEnvVariables() {
         final Map<String, String> credentials = new HashMap<>();
         credentials.put("sqluser", properties.getProperty("mysql.user"));
         credentials.put("sqlpassword", properties.getProperty("mysql.pass"));
