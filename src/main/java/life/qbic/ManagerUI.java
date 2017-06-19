@@ -74,17 +74,17 @@ public class ManagerUI extends UI {
         log.info("Started project-manager.");
 
         if (LiferayAndVaadinUtils.isLiferayPortlet()) {
-            properties = getPropertiesFromFile("${liferay.home}/qbic-ext.properties");
+            properties = getPropertiesFromFile("/home/luser/liferay-portal-6.2-ce-ga4/qbic-ext.properties");
         } else {
             System.err.println("Missing property file.");
         }
 
 
-        Map<String, String> credentials = getCredentialsFromEnvVariables();
+        //Map<String, String> credentials = getCredentialsFromEnvVariables();
 
-        if (credentials == null) {
-            System.err.println("Database login credentials missing from environment");
-        }
+        //if (credentials == null) {
+        //    System.err.println("Database login credentials missing from environment");
+        //}
 
         final VerticalLayout mainFrame = new VerticalLayout();
 
@@ -96,8 +96,8 @@ public class ManagerUI extends UI {
 
         final CssLayout statisticsPanel = new CssLayout();
 
-        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(credentials.get("sqluser"),
-                credentials.get("sqlpassword"), projectFilter);
+        final ProjectDatabaseConnector projectDatabase = new ProjectDatabase(properties.getProperty("sqluser"),
+                properties.getProperty("sqlpassword"), projectFilter);
 
         try {
             projectDatabase.connectToDatabase();
