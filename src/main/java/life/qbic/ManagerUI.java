@@ -78,13 +78,16 @@ public class ManagerUI extends UI {
         //set userID here:
         if (LiferayAndVaadinUtils.isLiferayPortlet()) {
            userID = LiferayAndVaadinUtils.getUser().getScreenName();
+           log.info("UserID = " + userID);
         }
 
-        Map<String, String> credentials = getCredentialsFromEnvVariables();
+        //userID = "zxmqw74";
 
-        if (credentials == null) {
-            System.err.println("Database login credentials missing from environment");
-        }
+        //Map<String, String> credentials = getCredentialsFromEnvVariables();
+
+        //if (credentials == null) {
+         //   log.info("Database login credentials missing from environment");
+        //}
 
         final VerticalLayout mainFrame = new VerticalLayout();
 
@@ -102,13 +105,13 @@ public class ManagerUI extends UI {
 
         try {
             projectDatabase.connectToDatabase();
+            log.info("Connection to SQL project database was successful.");
         } catch (SQLException exp) {
-            System.err.println("Could not connect to SQL project database. Reason: " + exp.getMessage());
+            log.info("Could not connect to SQL project database. Reason: " + exp.getMessage());
         }
 
 
         final CssLayout projectDescriptionLayout = new CssLayout();
-        Utils.notification("Hello", config.getDataSourceUser() + config.getDataSourcePassword() + config.getDataSourceUrl(), "success");
         final OpenBisClient openBisClient = new OpenBisClient(config.getDataSourceUser(),
                 config.getDataSourcePassword(), config.getDataSourceUrl());
 
